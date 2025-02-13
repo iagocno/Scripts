@@ -1,5 +1,5 @@
 local CoreGui = game:GetService("StarterGui")CoreGui:SetCore("SendNotification", {    Title = "🗿🍷",    Text = "Loading Content...",    Duration = 5, })print("Loading Content...")		local vu = game:GetService("VirtualUser")		game:GetService("Players").LocalPlayer.Idled:connect(function()		   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)		   wait(1)		   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)		end)
--- -- TESTES ABAIXO bigode do job
+-- -- TESTES ABAIXO pus cara q é bigode do job
 -- local loopNormal = {
 --     while true do
 --         for i = 1, 20 do
