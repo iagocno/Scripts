@@ -63,6 +63,13 @@ TeleportButton.Text = "Teleportes"
 TeleportButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 TeleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
+LoopInfButton.Parent = Tabs
+LoopInfButton.Size = UDim2.new(0.5, 0, 1, 0)
+LoopInfButton.Position = UDim2.new(0.5, 0, 0, 0)
+LoopInfButton.Text = "Teleportes"
+LoopInfButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+LoopInfButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
 CreditsFrame.Parent = MainFrame
 CreditsFrame.Size = UDim2.new(1, 0, 1, -60)
 CreditsFrame.Position = UDim2.new(0, 0, 0, 60)
@@ -112,6 +119,11 @@ CreditsButton.MouseButton1Click:Connect(function()
 end)
 
 TeleportButton.MouseButton1Click:Connect(function()
+    CreditsFrame.Visible = false
+    TeleportFrame.Visible = true
+end)
+
+LoopInfButton.MouseButton1Click:Connect(function()
     CreditsFrame.Visible = false
     TeleportFrame.Visible = true
 end)
