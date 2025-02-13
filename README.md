@@ -14,13 +14,24 @@ game:GetService("Players").LocalPlayer.Idled:connect(function()
     vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 
-local checkpoints = {}
-for i = 1, 20 do
-    local checkpoint = game:GetService("Workspace").EventPartFolder[tostring(i)] and game:GetService("Workspace").EventPartFolder[tostring(i)].Checkpoint
-    if checkpoint then
-        table.insert(checkpoints, checkpoint)
-    end
-end
+local checkpoints = {
+    game:GetService("Workspace").EventPartFolder["16"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["15"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["14"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["13"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["12"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["11"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["10"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["9"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["8"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["7"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["6"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["5"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["4"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["3"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["2"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["1"].Checkpoint
+}
 
 -- Criando a GUI
 local ScreenGui = Instance.new("ScreenGui")
@@ -32,8 +43,6 @@ local TeleportButton = Instance.new("TextButton")
 local CloseButton = Instance.new("TextButton")
 local CreditsFrame = Instance.new("Frame")
 local TeleportFrame = Instance.new("Frame")
-local LoopButton = Instance.new("TextButton")
-local LoopInfButton = Instance.new("TextButton")
 
 ScreenGui.Parent = game.CoreGui
 
@@ -94,44 +103,6 @@ TeleportFrame.Position = UDim2.new(0, 0, 0, 60)
 TeleportFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 TeleportFrame.Visible = false
 
-LoopButton.Parent = TeleportFrame
-LoopButton.Size = UDim2.new(1, 0, 0, 30)
-LoopButton.Position = UDim2.new(0, 0, 0, 0)
-LoopButton.Text = "Loop"
-LoopButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-LoopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-LoopInfButton.Parent = TeleportFrame
-LoopInfButton.Size = UDim2.new(1, 0, 0, 30)
-LoopInfButton.Position = UDim2.new(0, 0, 0, 35)
-LoopInfButton.Text = "Loop Infinito"
-LoopInfButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-LoopInfButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-local function loop()
-    while true do
-        for i = 1, 20 do
-            local checkpoint = workspace.EventPartFolder:FindFirstChild(tostring(i))
-            if checkpoint then
-                game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", checkpoint)
-            end
-            task.wait()
-        end
-    end
-end
-
-local function loopInf()
-    while true do
-        for i = 1, 20 do
-            game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder[tostring(i)])
-            task.wait()
-        end
-    end
-end
-
-LoopButton.MouseButton1Click:Connect(loop)
-LoopInfButton.MouseButton1Click:Connect(loopInf)
-
 CreditsButton.MouseButton1Click:Connect(function()
     CreditsFrame.Visible = true
     TeleportFrame.Visible = false
@@ -144,4 +115,26 @@ end)
 
 CloseButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
+end)
+
+spawn(function()
+    while true do
+        for i = 1, 20 do
+            local checkpointName = tostring(i)
+            local checkpoint = workspace.EventPartFolder:FindFirstChild(checkpointName)
+            if checkpoint then
+                game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", checkpoint)
+            end
+            task.wait()
+        end
+    end
+end)
+
+spawn(function()
+    while true do
+        for i = 1, 20 do
+            game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder[tostring(i)])
+            task.wait()
+        end
+    end
 end)
