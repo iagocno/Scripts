@@ -70,7 +70,7 @@ CreditsFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 
 local CreditText = Instance.new("TextLabel", CreditsFrame)
 CreditText.Size = UDim2.new(1, 0, 1, -50)
-CreditText.Text = "Criado por SeuNome"
+CreditText.Text = "Criado por iagocno🗿🍷"
 CreditText.TextColor3 = Color3.fromRGB(255, 255, 255)
 CreditText.BackgroundTransparency = 1
 CreditText.TextSize = 16
