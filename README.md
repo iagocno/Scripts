@@ -1,86 +1,86 @@
 local CoreGui = game:GetService("StarterGui")CoreGui:SetCore("SendNotification", {    Title = "🗿🍷",    Text = "Loading Content...",    Duration = 5, })print("Loading Content...")		local vu = game:GetService("VirtualUser")		game:GetService("Players").LocalPlayer.Idled:connect(function()		   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)		   wait(1)		   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)		end)
--- TESTES ABAIXO
-local loopNormal = {
-    while true do
-        for i = 1, 20 do
-            local checkpointName = tostring(i)  -- Converte o número para string
-            local checkpoint = workspace.EventPartFolder:FindFirstChild(checkpointName)
+-- -- TESTES ABAIXO
+-- local loopNormal = {
+--     while true do
+--         for i = 1, 20 do
+--             local checkpointName = tostring(i)  -- Converte o número para string
+--             local checkpoint = workspace.EventPartFolder:FindFirstChild(checkpointName)
     
-            if checkpoint then
-                -- Envia os dados para o servidor
-                game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", checkpoint)
-            end
+--             if checkpoint then
+--                 -- Envia os dados para o servidor
+--                 game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", checkpoint)
+--             end
     
-            task.wait()  -- Espera um pouco antes de continuar
-        end
-    end
-}
+--             task.wait()  -- Espera um pouco antes de continuar
+--         end
+--     end
+-- }
 
-local loopInf = {
-    while true do
-        -- Envia dados dos checkpoints de 1 até 20
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["1"])
-        task.wait()
+-- local loopInf = {
+--     while true do
+--         -- Envia dados dos checkpoints de 1 até 20
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["1"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["2"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["2"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["3"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["3"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["4"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["4"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["5"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["5"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["6"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["6"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["7"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["7"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["8"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["8"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["9"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["9"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["10"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["10"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["11"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["11"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["12"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["12"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["13"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["13"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["14"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["14"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["15"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["15"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["16"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["16"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["17"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["17"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["18"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["18"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["19"])
-        task.wait()
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["19"])
+--         task.wait()
     
-        game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["20"])
-        task.wait()
-    end
-}
--- TESTES ACIMA
+--         game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder["20"])
+--         task.wait()
+--     end
+-- }
+-- -- TESTES ACIMA
 
 local checkpoints = {
     game:GetService("Workspace").EventPartFolder["16"].Checkpoint,
