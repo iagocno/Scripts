@@ -1,6 +1,8 @@
 local CoreGui = game:GetService("StarterGui")CoreGui:SetCore("SendNotification", {    Title = "🗿🍷",    Text = "Loading Content...",    Duration = 5, })print("Loading Content...")		local vu = game:GetService("VirtualUser")		game:GetService("Players").LocalPlayer.Idled:connect(function()		   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)		   wait(1)		   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)		end)
 local checkpoints = {
-    game:GetService("Workspace").EventPartFolder["1"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["16"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["15"].Checkpoint,
+    game:GetService("Workspace").EventPartFolder["14"].Checkpoint,
     game:GetService("Workspace").EventPartFolder["13"].Checkpoint,
     game:GetService("Workspace").EventPartFolder["12"].Checkpoint,
     game:GetService("Workspace").EventPartFolder["11"].Checkpoint,
@@ -13,7 +15,7 @@ local checkpoints = {
     game:GetService("Workspace").EventPartFolder["4"].Checkpoint,
     game:GetService("Workspace").EventPartFolder["3"].Checkpoint,
     game:GetService("Workspace").EventPartFolder["2"].Checkpoint,
-    game:GetService("Workspace").EventPartFolder["14"].Checkpoint
+    game:GetService("Workspace").EventPartFolder["1"].Checkpoint
 }
 
 -- Criando a GUI
