@@ -1,5 +1,5 @@
 local CoreGui = game:GetService("StarterGui")CoreGui:SetCore("SendNotification", {    Title = "🗿🍷",    Text = "Loading Content...",    Duration = 5, })print("Loading Content...")		local vu = game:GetService("VirtualUser")		game:GetService("Players").LocalPlayer.Idled:connect(function()		   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)		   wait(1)		   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)		end)
--- -- TESTES ABAIXO pus cara q é bigode do job
+-- -- TESTES ABAIXO
 -- local loopNormal = {
 --     while true do
 --         for i = 1, 20 do
@@ -158,14 +158,15 @@ loopInfButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 -- TESTES ACIMA
 
 CreditsButton.Parent = Tabs
-CreditsButton.Size = UDim2.new(0.5, 0, 1, 0)
+CreditsButton.Size = UDim2.new(0.25, 0, 1, 0)
+CreditsButton.Position = UDim2.new(0.25, 0, 0, 0)
 CreditsButton.Text = "Créditos"
 CreditsButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 CreditsButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 TeleportButton.Parent = Tabs
-TeleportButton.Size = UDim2.new(0.5, 0, 1, 0)
-TeleportButton.Position = UDim2.new(0.5, 0, 0, 0)
+TeleportButton.Size = UDim2.new(0.25, 0, 1, 0)
+-- TeleportButton.Position = UDim2.new(0.5, 0, 0, 0)
 TeleportButton.Text = "Teleportes"
 TeleportButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 TeleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
