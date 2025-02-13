@@ -123,11 +123,6 @@ TeleportButton.MouseButton1Click:Connect(function()
     TeleportFrame.Visible = true
 end)
 
-LoopInfButton.MouseButton1Click:Connect(function()
-    CreditsFrame.Visible = false
-    TeleportFrame.Visible = true
-end)
-
 CloseButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
