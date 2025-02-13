@@ -1,19 +1,4 @@
-local CoreGui = game:GetService("StarterGui")
-CoreGui:SetCore("SendNotification", {
-    Title = "🗿🍷",
-    Text = "Loading Content...",
-    Duration = 5,
-})
-
-print("Loading Content...")
-
-local vu = game:GetService("VirtualUser")
-game:GetService("Players").LocalPlayer.Idled:connect(function()
-    vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-    wait(1)
-    vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-end)
-
+local CoreGui = game:GetService("StarterGui")CoreGui:SetCore("SendNotification", {    Title = "🗿🍷",    Text = "Loading Content...",    Duration = 5, })print("Loading Content...")		local vu = game:GetService("VirtualUser")		game:GetService("Players").LocalPlayer.Idled:connect(function()		   vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)		   wait(1)		   vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)		end)
 local checkpoints = {
     game:GetService("Workspace").EventPartFolder["16"].Checkpoint,
     game:GetService("Workspace").EventPartFolder["15"].Checkpoint,
@@ -103,6 +88,24 @@ TeleportFrame.Position = UDim2.new(0, 0, 0, 60)
 TeleportFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 TeleportFrame.Visible = false
 
+-- Criando botões de teleporte
+for i, checkpoint in ipairs(checkpoints) do
+    local TeleportOption = Instance.new("TextButton", TeleportFrame)
+    TeleportOption.Size = UDim2.new(1, 0, 0, 25)
+    TeleportOption.Position = UDim2.new(0, 0, 0, (i - 1) * 30)
+    TeleportOption.Text = "Teleportar para " .. i
+    TeleportOption.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    TeleportOption.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+    TeleportOption.MouseButton1Click:Connect(function()
+        local player = game.Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            player.Character.HumanoidRootPart.CFrame = checkpoint.CFrame
+        end
+    end)
+end
+
+-- Alternar entre abas
 CreditsButton.MouseButton1Click:Connect(function()
     CreditsFrame.Visible = true
     TeleportFrame.Visible = false
@@ -115,26 +118,4 @@ end)
 
 CloseButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
-end)
-
-spawn(function()
-    while true do
-        for i = 1, 20 do
-            local checkpointName = tostring(i)
-            local checkpoint = workspace.EventPartFolder:FindFirstChild(checkpointName)
-            if checkpoint then
-                game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", checkpoint)
-            end
-            task.wait()
-        end
-    end
-end)
-
-spawn(function()
-    while true do
-        for i = 1, 20 do
-            game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder[tostring(i)])
-            task.wait()
-        end
-    end
 end)
