@@ -5,18 +5,24 @@ CoreGui:SetCore("SendNotification", {
     Duration = 5,
 })
 
+print("Loading Content...")
+
 local vu = game:GetService("VirtualUser")
 game:GetService("Players").LocalPlayer.Idled:connect(function()
-    vu:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
     wait(1)
-    vu:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 end)
 
 local checkpoints = {}
 for i = 1, 20 do
-    table.insert(checkpoints, game:GetService("Workspace").EventPartFolder[tostring(i)].Checkpoint)
+    local checkpoint = game:GetService("Workspace").EventPartFolder[tostring(i)] and game:GetService("Workspace").EventPartFolder[tostring(i)].Checkpoint
+    if checkpoint then
+        table.insert(checkpoints, checkpoint)
+    end
 end
 
+-- Criando a GUI
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
@@ -32,7 +38,7 @@ local LoopInfButton = Instance.new("TextButton")
 ScreenGui.Parent = game.CoreGui
 
 MainFrame.Parent = ScreenGui
-MainFrame.Size = UDim2.new(0, 250, 0, 400)
+MainFrame.Size = UDim2.new(0, 250, 0, 300)
 MainFrame.Position = UDim2.new(0.5, -125, 0.4, -150)
 MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MainFrame.BorderSizePixel = 2
@@ -90,43 +96,41 @@ TeleportFrame.Visible = false
 
 LoopButton.Parent = TeleportFrame
 LoopButton.Size = UDim2.new(1, 0, 0, 30)
-LoopButton.Position = UDim2.new(0, 0, 1, -70)
+LoopButton.Position = UDim2.new(0, 0, 0, 0)
 LoopButton.Text = "Loop"
-LoopButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+LoopButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
 LoopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 LoopInfButton.Parent = TeleportFrame
 LoopInfButton.Size = UDim2.new(1, 0, 0, 30)
-LoopInfButton.Position = UDim2.new(0, 0, 1, -40)
+LoopInfButton.Position = UDim2.new(0, 0, 0, 35)
 LoopInfButton.Text = "Loop Infinito"
-LoopInfButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+LoopInfButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 LoopInfButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-local function startLoop()
+local function loop()
     while true do
-        for i, checkpoint in ipairs(checkpoints) do
-            game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", checkpoint)
+        for i = 1, 20 do
+            local checkpoint = workspace.EventPartFolder:FindFirstChild(tostring(i))
+            if checkpoint then
+                game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", checkpoint)
+            end
             task.wait()
         end
     end
 end
 
-local function startLoopInf()
+local function loopInf()
     while true do
-        for _, checkpoint in ipairs(checkpoints) do
-            game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", checkpoint)
+        for i = 1, 20 do
+            game:GetService("ReplicatedStorage").RemoteMessenger.SendData:FireServer("CheckPointUpdate", workspace.EventPartFolder[tostring(i)])
             task.wait()
         end
     end
 end
 
-LoopButton.MouseButton1Click:Connect(function()
-    task.spawn(startLoop)
-end)
-
-LoopInfButton.MouseButton1Click:Connect(function()
-    task.spawn(startLoopInf)
-end)
+LoopButton.MouseButton1Click:Connect(loop)
+LoopInfButton.MouseButton1Click:Connect(loopInf)
 
 CreditsButton.MouseButton1Click:Connect(function()
     CreditsFrame.Visible = true
