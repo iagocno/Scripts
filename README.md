@@ -143,16 +143,16 @@ Tabs.Position = UDim2.new(0, 0, 0, 30)
 
 -- TESTES ABAIXO
 loopNormalButton.Parent = Tabs
-loopNormalButton.Size = UDim2.new(0.5, 0, 1, 0)
+loopNormalButton.Size = UDim2.new(0.25, 0, 1, 0)
 loopNormalButton.Position = UDim2.new(0.5, 0, 0, 0)
-loopNormalButton.Text = "Teleportes"
+loopNormalButton.Text = "Loop Normal"
 loopNormalButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 loopNormalButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 loopInfButton.Parent = Tabs
-loopInfButton.Size = UDim2.new(0.5, 0, 1, 0)
-loopInfButton.Position = UDim2.new(0.5, 0, 0, 0)
-loopInfButton.Text = "Teleportes"
+loopInfButton.Size = UDim2.new(0.25, 0, 1, 0)
+loopInfButton.Position = UDim2.new(0.75, 0, 0, 0)
+loopInfButton.Text = "Loop Inf"
 loopInfButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
 loopInfButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 -- TESTES ACIMA
