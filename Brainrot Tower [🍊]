@@ -1,0 +1,161 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local CoreGui = game:GetService("CoreGui")
+
+local player = Players.LocalPlayer
+
+-- Criar GUI principal
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "LuckyBombiniGUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = CoreGui
+
+-- Criar frame principal
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 315, 0, 350)
+mainFrame.Position = UDim2.new(0.7, 0, 0.3, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BorderSizePixel = 2
+mainFrame.BorderColor3 = Color3.fromRGB(80, 80, 80)
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+-- Title Bar
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 35)
+titleBar.BackgroundColor3 = Color3.fromRGB(90, 0, 150)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = mainFrame
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -90, 1, 0)
+titleLabel.Position = UDim2.new(0, 5, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Brainrot Tower [🍊]"
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 20
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = titleBar
+
+-- Fechar
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -35, 0, 2)
+closeBtn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 18
+closeBtn.Parent = titleBar
+
+closeBtn.MouseButton1Click:Connect(function()
+	screenGui:Destroy()
+end)
+
+-- Minimizar
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+minimizeBtn.Position = UDim2.new(1, -105, 0, 2)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+minimizeBtn.Text = "-"
+minimizeBtn.TextColor3 = Color3.new(1, 1, 1)
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.TextSize = 18
+minimizeBtn.Parent = titleBar
+
+-- Maximizar
+local maximizeBtn = Instance.new("TextButton")
+maximizeBtn.Size = UDim2.new(0, 30, 0, 30)
+maximizeBtn.Position = UDim2.new(1, -70, 0, 2)
+maximizeBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+maximizeBtn.Text = "▢"
+maximizeBtn.TextColor3 = Color3.new(1, 1, 1)
+maximizeBtn.Font = Enum.Font.GothamBold
+maximizeBtn.TextSize = 18
+maximizeBtn.Parent = titleBar
+
+-- Scrolling Frame
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, 0, 1, -35)
+scrollFrame.Position = UDim2.new(0, 0, 0, 35)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+scrollFrame.BorderSizePixel = 0
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollFrame.ScrollBarThickness = 8
+scrollFrame.Visible = true
+scrollFrame.Parent = mainFrame
+
+local layout = Instance.new("UIListLayout")
+layout.Padding = UDim.new(0, 5)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.Parent = scrollFrame
+
+-- -- Layout vertical
+-- local layout = Instance.new("UIListLayout")
+-- layout.Padding = UDim.new(0, 0)
+-- layout.SortOrder = Enum.SortOrder.LayoutOrder
+-- layout.Parent = mainFrame
+
+-- -- Espaço entre título e botões
+-- local spacer = Instance.new("Frame")
+-- spacer.Size = UDim2.new(1, 0, 0, 10)
+-- spacer.BackgroundTransparency = 1
+-- spacer.Parent = mainFrame
+
+-- Função utilitária para criar botões
+local function createButton(text, callback)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(1, -10, 0, 40)
+	btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.Font = Enum.Font.Gotham
+	btn.TextSize = 20
+	btn.Text = text
+	btn.Parent = scrollFrame
+	btn.MouseButton1Click:Connect(callback)
+end
+
+-- Botão: Abrir Lucky Block
+createButton("BRAINROT BLOCK", function()
+	local remote = ReplicatedStorage:FindFirstChild("Events"):FindFirstChild("LuckyBlockOpen")
+	if remote then
+		remote:FireServer()
+	else
+		warn("LuckyBlockOpen não encontrado")
+	end
+end)
+
+-- Botão: Bombini Escape
+createButton("BOMBINI ESCAPE", function()
+	local remote = ReplicatedStorage:FindFirstChild("Events"):FindFirstChild("BombombiniEscape")
+	if remote then
+		remote:FireServer()
+	else
+		warn("BombombiniEscape não encontrado")
+	end
+end)
+
+-- Ajustar rolagem automática
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y)
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	scrollFrame.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y)
+end)
+
+-- Minimizar/maximizar lógica
+local isMinimized = false
+
+minimizeBtn.MouseButton1Click:Connect(function()
+	scrollFrame.Visible = false
+	mainFrame.Size = UDim2.new(0, 315, 0, 35)
+	isMinimized = true
+end)
+
+maximizeBtn.MouseButton1Click:Connect(function()
+	if isMinimized then
+		scrollFrame.Visible = true
+		mainFrame.Size = UDim2.new(0, 315, 0, 350)
+		isMinimized = false
+	end
+end)
