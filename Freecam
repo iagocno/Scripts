@@ -1,0 +1,167 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local CoreGui = game:GetService("CoreGui")
+local player = Players.LocalPlayer
+local camera = workspace.CurrentCamera
+
+-- GUI Setup
+local gui = Instance.new("ScreenGui", CoreGui)
+gui.Name = "FreecamGUI"
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 350, 0, 300)
+frame.Position = UDim2.new(0.6, 0, 0.2, 0)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+frame.BorderSizePixel = 2
+frame.Active = true
+frame.Draggable = true
+
+local header = Instance.new("TextLabel", frame)
+header.Size = UDim2.new(1, 0, 0, 35)
+header.Text = "Freecam"
+header.BackgroundColor3 = Color3.fromRGB(90, 0, 90)
+header.TextColor3 = Color3.new(1, 1, 1)
+header.Font = Enum.Font.GothamBold
+header.TextSize = 20
+
+local toggleBtn = Instance.new("TextButton", frame)
+toggleBtn.Size = UDim2.new(1, 0, 0, 30)
+toggleBtn.Position = UDim2.new(0, 0, 0, 40)
+toggleBtn.Text = "Start Freecam"
+toggleBtn.BackgroundColor3 = Color3.fromRGB(140, 20, 80)
+toggleBtn.TextColor3 = Color3.new(1, 1, 1)
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextSize = 18
+
+local posBox = Instance.new("TextBox", frame)
+posBox.Position = UDim2.new(0, 10, 0, 90)
+posBox.Size = UDim2.new(0, 240, 0, 25)
+posBox.Text = "0 0 0"
+posBox.ClearTextOnFocus = false
+posBox.TextColor3 = Color3.new(1, 1, 1)
+posBox.Font = Enum.Font.Code
+posBox.TextSize = 14
+posBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+
+local speedBox = Instance.new("TextBox", frame)
+speedBox.Position = UDim2.new(0, 10, 0, 125)
+speedBox.Size = UDim2.new(0, 100, 0, 25)
+speedBox.Text = "10"
+speedBox.ClearTextOnFocus = false
+speedBox.TextColor3 = Color3.new(1, 1, 1)
+speedBox.Font = Enum.Font.Code
+speedBox.TextSize = 14
+speedBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+
+local controls = Instance.new("TextLabel", frame)
+controls.Position = UDim2.new(0, 10, 0, 160)
+controls.Size = UDim2.new(1, -20, 0, 120)
+controls.Text = [[
+Controls:
+- WASD / Arrows: Movement
+- Space / PgUp: Move up
+- Ctrl / PgDown: Move down
+- Right Mouse Button: Free look
+- Shift: Super speed
+]]
+controls.TextWrapped = true
+controls.TextXAlignment = Enum.TextXAlignment.Left
+controls.TextColor3 = Color3.fromRGB(200, 200, 200)
+controls.Font = Enum.Font.Code
+controls.TextSize = 14
+controls.BackgroundTransparency = 1
+
+-- Freecam Logic
+local active = false
+local camCF = camera.CFrame
+local yaw, pitch = 0, 0
+local dragging = false
+local inputs = {
+	W = false, A = false, S = false, D = false,
+	Up = false, Down = false,
+	Boost = false
+}
+
+local function setInputs(key, state)
+	if key == Enum.KeyCode.W then inputs.W = state end
+	if key == Enum.KeyCode.A then inputs.A = state end
+	if key == Enum.KeyCode.S then inputs.S = state end
+	if key == Enum.KeyCode.D then inputs.D = state end
+	if key == Enum.KeyCode.Space or key == Enum.KeyCode.PageUp then inputs.Up = state end
+	if key == Enum.KeyCode.LeftControl or key == Enum.KeyCode.PageDown then inputs.Down = state end
+	if key == Enum.KeyCode.LeftShift then inputs.Boost = state end
+end
+
+local function updatePosDisplay()
+	local pos = camera.CFrame.Position
+	posBox.Text = string.format("%.2f %.2f %.2f", pos.X, pos.Y, pos.Z)
+end
+
+-- Mouse look
+UserInputService.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton2 then
+		dragging = true
+		UserInputService.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
+	elseif input.UserInputType == Enum.UserInputType.Keyboard then
+		setInputs(input.KeyCode, true)
+	end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton2 then
+		dragging = false
+		UserInputService.MouseBehavior = Enum.MouseBehavior.Default
+	elseif input.UserInputType == Enum.UserInputType.Keyboard then
+		setInputs(input.KeyCode, false)
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		yaw = yaw - input.Delta.X * 0.002
+		pitch = math.clamp(pitch - input.Delta.Y * 0.002, -math.pi/2 + 0.01, math.pi/2 - 0.01)
+	end
+end)
+
+toggleBtn.MouseButton1Click:Connect(function()
+	active = not active
+	toggleBtn.Text = active and "End Freecam" or "Start Freecam"
+
+	if active then
+		camCF = camera.CFrame
+		local look = camCF.LookVector
+		yaw = math.atan2(-look.X, -look.Z)
+		pitch = math.asin(look.Y)
+
+		if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+			player.Character.HumanoidRootPart.Anchored = true
+		end
+		camera.CameraType = Enum.CameraType.Scriptable
+	else
+		if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+			player.Character.HumanoidRootPart.Anchored = false
+		end
+		camera.CameraType = Enum.CameraType.Custom
+	end
+end)
+
+RunService.RenderStepped:Connect(function(dt)
+	if not active then return end
+
+	local moveVec = Vector3.zero
+	if inputs.W then moveVec += Vector3.new(0, 0, -1) end
+	if inputs.S then moveVec += Vector3.new(0, 0, 1) end
+	if inputs.A then moveVec += Vector3.new(-1, 0, 0) end
+	if inputs.D then moveVec += Vector3.new(1, 0, 0) end
+	if inputs.Up then moveVec += Vector3.new(0, 1, 0) end
+	if inputs.Down then moveVec += Vector3.new(0, -1, 0) end
+
+	local moveSpeed = tonumber(speedBox.Text) or 10
+	if inputs.Boost then moveSpeed *= 2 end
+
+	local rot = CFrame.Angles(0, yaw, 0) * CFrame.Angles(pitch, 0, 0)
+	camCF = camCF + rot:VectorToWorldSpace(moveVec * moveSpeed * dt)
+	camera.CFrame = CFrame.new(camCF.Position) * rot
+	updatePosDisplay()
+end)
