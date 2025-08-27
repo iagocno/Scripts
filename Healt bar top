@@ -1,0 +1,180 @@
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+
+local localPlayer = Players.LocalPlayer
+
+local teamColors = {
+    TBC = Color3.fromRGB(0, 145, 255), -- Bright Blue
+    TRC = Color3.fromRGB(255, 0, 0),   -- Bright Red
+    TGC = Color3.fromRGB(0, 255, 0),   -- Bright Green
+    TOC = Color3.fromRGB(255, 145, 0), -- Bright Orange
+    TPC = Color3.fromRGB(170, 0, 255), -- Bright Violet
+    TYC = Color3.fromRGB(255, 255, 0), -- Bright Yellow
+}
+
+local espObjects = {}
+
+-- Função para pegar o time do player com debug
+local function getPlayerTeam(player)
+    local status = player:FindFirstChild("Status")
+    if not status then
+        print(player.Name .. " não tem Status")
+        return nil
+    end
+    local team = status:FindFirstChild("Team")
+    if not team then
+        print(player.Name .. " não tem Team")
+        return nil
+    end
+    return team.Value
+end
+
+-- Função para criar ESP simples
+local function createESP(player)
+    if player == localPlayer then return end
+
+    local team = getPlayerTeam(player)
+    if not team then return end
+
+    local localTeam = getPlayerTeam(localPlayer)
+    if team == localTeam then
+        print(player.Name .. " é do mesmo time, não cria ESP")
+        return
+    end
+
+    local character = player.Character
+    if not character then
+        print(player.Name .. " não tem Character")
+        return
+    end
+
+    local hrp = character:FindFirstChild("HumanoidRootPart") or (character:FindFirstChild("Ragdoll") and character.Ragdoll:FindFirstChild("HumanoidRootPart"))
+    if not hrp then
+        print(player.Name .. " não tem HumanoidRootPart")
+        return
+    end
+
+    -- Criar highlight
+    local highlight = Instance.new("Highlight")
+    highlight.Adornee = character
+    highlight.FillColor = teamColors[team] or Color3.new(1,1,1)
+    highlight.OutlineColor = Color3.new(1,1,1)
+    highlight.Parent = CoreGui
+    highlight.Name = player.Name.."_Highlight"
+
+    -- Criar barra de vida
+    local healthGui = Instance.new("BillboardGui")
+    healthGui.Adornee = hrp
+    healthGui.Size = UDim2.new(0, 20, 0, 80)
+    healthGui.StudsOffset = Vector3.new(-2.5, 2, 0)
+    healthGui.AlwaysOnTop = true
+    healthGui.Parent = CoreGui
+    healthGui.Name = player.Name.."_HealthGui"
+
+    local bg = Instance.new("Frame", healthGui)
+    bg.Size = UDim2.new(1, 0, 1, 0)
+    bg.BackgroundColor3 = Color3.new(0, 0, 0)
+    bg.BorderSizePixel = 1
+
+    local healthBar = Instance.new("Frame", bg)
+    healthBar.BackgroundColor3 = Color3.new(0, 1, 0)
+    healthBar.AnchorPoint = Vector2.new(0, 1)
+    healthBar.Position = UDim2.new(0, 0, 1, 0)
+    healthBar.Size = UDim2.new(1, 0, 1, 0)
+
+    local healthText = Instance.new("TextLabel", bg)
+    healthText.Size = UDim2.new(1, 0, 1, 0)
+    healthText.BackgroundTransparency = 1
+    healthText.TextColor3 = Color3.new(1,1,1)
+    healthText.Font = Enum.Font.GothamBold
+    healthText.TextScaled = true
+    healthText.TextStrokeColor3 = Color3.new(0, 0, 0)
+    healthText.TextStrokeTransparency = 0
+    healthText.Text = "100/100"
+
+    espObjects[player] = {
+        highlight = highlight,
+        healthGui = healthGui,
+        healthBar = healthBar,
+        healthText = healthText
+    }
+
+    print("ESP criado para " .. player.Name)
+end
+
+local function updateESP()
+    local localTeam = getPlayerTeam(localPlayer)
+    for player, obj in pairs(espObjects) do
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local team = getPlayerTeam(player)
+            if team ~= localTeam then
+                obj.highlight.Enabled = true
+                obj.healthGui.Enabled = true
+
+                -- Atualizar vida
+                local nrpbs = player:FindFirstChild("NRPBS")
+                if nrpbs then
+                    local health = nrpbs:FindFirstChild("Health") and nrpbs.Health.Value or 100
+                    local maxHealth = nrpbs:FindFirstChild("MaxHealth") and nrpbs.MaxHealth.Value or 100
+                    local ratio = math.clamp(health / maxHealth, 0, 1)
+                    obj.healthBar.Size = UDim2.new(1, 0, ratio, 0)
+                    obj.healthText.Text = math.floor(health).."/"..math.floor(maxHealth)
+
+                    -- Cor da barra
+                    if ratio > 0.7 then
+                        obj.healthBar.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+                    elseif ratio > 0.4 then
+                        obj.healthBar.BackgroundColor3 = Color3.fromRGB(255, 165, 0)
+                    else
+                        obj.healthBar.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+                    end
+                end
+            else
+                -- Mesma equipe, esconde ESP
+                obj.highlight.Enabled = false
+                obj.healthGui.Enabled = false
+            end
+        else
+            -- Se personagem sumir, destruir ESP
+            if obj.highlight then obj.highlight:Destroy() end
+            if obj.healthGui then obj.healthGui:Destroy() end
+            espObjects[player] = nil
+        end
+    end
+end
+
+-- Criar ESP para todos players
+local function refreshESP()
+    for _, player in ipairs(Players:GetPlayers()) do
+        if not espObjects[player] then
+            createESP(player)
+        end
+    end
+end
+
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        wait(1)
+        createESP(player)
+    end)
+end)
+
+Players.PlayerRemoving:Connect(function(player)
+    if espObjects[player] then
+        if espObjects[player].highlight then espObjects[player].highlight:Destroy() end
+        if espObjects[player].healthGui then espObjects[player].healthGui:Destroy() end
+        espObjects[player] = nil
+    end
+end)
+
+-- Esperar personagem local carregar para pegar o time
+if not localPlayer.Character then
+    localPlayer.CharacterAdded:Wait()
+end
+
+wait(1) -- garantir que Status carregou
+
+refreshESP()
+
+RunService.RenderStepped:Connect(updateESP)
