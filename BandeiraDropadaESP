@@ -1,0 +1,32 @@
+local workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+
+local function createHighlight(part)
+    if part and part:IsA("BasePart") and not part:FindFirstChildOfClass("Highlight") then
+        local highlight = Instance.new("Highlight")
+        highlight.Adornee = part
+        highlight.FillColor = Color3.fromRGB(0, 255, 255) -- Azul Ciano
+        highlight.OutlineColor = Color3.new(0, 0, 0) -- Preto
+        highlight.FillTransparency = 0.5
+        highlight.OutlineTransparency = 0
+        highlight.Parent = part
+    end
+end
+
+local function applyESP()
+    local partsFolder = workspace:FindFirstChild("Core")
+        and workspace.Core:FindFirstChild("Debris")
+        and workspace.Core.Debris:FindFirstChild("FlagDrop")
+        and workspace.Core.Debris.FlagDrop:FindFirstChild("Parts")
+
+    if partsFolder then
+        for _, part in ipairs(partsFolder:GetChildren()) do
+            createHighlight(part)
+        end
+    end
+end
+
+-- Loop que atualiza o ESP continuamente (a cada frame)
+RunService.RenderStepped:Connect(function()
+    applyESP()
+end)
