@@ -1,0 +1,562 @@
+Substitua todos caminhos DE ESP abaixo por esses> PARA BOT: workspace.Mobs.Nome__Bot e workspace.Mobs.Nome__Bot.HumanoidRootPart PARA PLAYER: workspace.NomeDoPlayer e workspace.NomeDoPlayer.HumanoidRootPart
+
+Aqui fica o caminho para ver a vida DO BOT: workspace.Mobs.Nome__Bot.Humanoid.Health 
+workspace.Mobs.Nome__Bot.Humanoid.MaxHealth VIDA PLAYER: workspace.NomeDoPlayer.Humanoid.Health workspace.NomeDoPlayer.Humanoid.MaxHealth
+
+
+Existem 2 team: team 1: Vermelho team 2: Azul
+Não mostrar Player ESP da pessoas do meu time, aqui o caminho para você criar essa lógica: game:GetService("Players").LocalPlayer.Team
+
+Não mostrar Player ESP dos bots do meu time, aqui o caminho para você criar essa lógica: workspace.Mobs.Nome__Bot.Team
+
+SUBSTITUA TODOS CAMINHOS QUE EU MANDEI NESSES ABAIXO⬇️
+HumanoidRootPart tem muitos, mais vou mandar os caminhos que eu acho que pode ser.
+game:GetService("Players").NomeDoPlayer.Ragdoll.HumanoidRootPart 
+workspace.NomeDoPlayer.HumanoidRootPart. Só achei para ver que time está o player, game:GetService("Players").NomeDoPlayer.Status.Team. MaxHealth: game:GetService("Players").NomeDoPlayer.NRPBS.MaxHealth Health: game:GetService("Players").NomeDoPlayer.NRPBS.Health. Achei essa pasta com todos times do jogo game:GetService("Teams") Times na pasta: Teams
+TBC: Bright blue 
+TGC: Bright green
+TOC: Bright orange 
+TPC: Bright violet
+TRC: Bright red
+TYC: Bright yellow
+----------------------------------------------------------------------------------------------------------------
+
+
+
+
+-- ESP completo: Toggle bonito (createSwitch) + Skeleton (Drawing) + HealthBar (NRPBS) + Name ESP + Highlight por time
+-- COLE como LocalScript (StarterPlayerScripts) ou execute no cliente com seu executor.
+
+--// Serviços
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local Workspace = game:GetService("Workspace")
+local Camera = workspace.CurrentCamera
+
+local LocalPlayer = Players.LocalPlayer
+
+--// Cores por time (sua tabela)
+local teamColors = {
+    TBC = Color3.fromRGB(0, 145, 255), -- Bright Blue
+    TRC = Color3.fromRGB(255, 0, 0),   -- Bright Red
+    TGC = Color3.fromRGB(0, 255, 0),   -- Bright Green
+    TOC = Color3.fromRGB(255, 145, 0), -- Bright Orange
+    TPC = Color3.fromRGB(170, 0, 255), -- Bright Violet
+    TYC = Color3.fromRGB(255, 255, 0), -- Bright Yellow
+}
+
+-- Tabelas
+local espLines = {}    -- skeleton drawing lines: espLines[player] = {line1, line2, ...}
+local espObjects = {}  -- GUIs / Highlight: espObjects[player] = {highlight, nameGui, nameLbl, healthGui, healthBar, healthText}
+
+--// GUI principal (base) - onde o createSwitch vai inserir os switches (usa scrollFrame)
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "WallhackPlus_Plus_GUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = CoreGui -- se algum jogo impedir, mova para PlayerGui; por padrão você pediu CoreGui em códigos anteriores
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 315, 0, 350)
+mainFrame.Position = UDim2.new(0.7, 0, 0.3, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BorderSizePixel = 2
+mainFrame.BorderColor3 = Color3.fromRGB(80, 80, 80)
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+-- Title Bar
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 35)
+titleBar.BackgroundColor3 = Color3.fromRGB(90, 0, 150)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = mainFrame
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -90, 1, 0)
+titleLabel.Position = UDim2.new(0, 5, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "ESP-Plus+"
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 20
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = titleBar
+
+-- Fechar
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -35, 0, 2)
+closeBtn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 18
+closeBtn.Parent = titleBar
+
+closeBtn.MouseButton1Click:Connect(function()
+	screenGui:Destroy()
+end)
+
+-- Minimizar
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+minimizeBtn.Position = UDim2.new(1, -105, 0, 2)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+minimizeBtn.Text = "-"
+minimizeBtn.TextColor3 = Color3.new(1, 1, 1)
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.TextSize = 18
+minimizeBtn.Parent = titleBar
+
+-- Maximizar
+local maximizeBtn = Instance.new("TextButton")
+maximizeBtn.Size = UDim2.new(0, 30, 0, 30)
+maximizeBtn.Position = UDim2.new(1, -70, 0, 2)
+maximizeBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+maximizeBtn.Text = "▢"
+maximizeBtn.TextColor3 = Color3.new(1, 1, 1)
+maximizeBtn.Font = Enum.Font.GothamBold
+maximizeBtn.TextSize = 18
+maximizeBtn.Parent = titleBar
+
+-- Scrolling Frame
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, 0, 1, -35)
+scrollFrame.Position = UDim2.new(0, 0, 0, 35)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+scrollFrame.BorderSizePixel = 0
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollFrame.ScrollBarThickness = 8
+scrollFrame.Visible = true
+scrollFrame.Parent = mainFrame
+
+local layout = Instance.new("UIListLayout", scrollFrame)
+layout.Padding = UDim.new(0,6)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    scrollFrame.CanvasSize = UDim2.new(0,0,0,layout.AbsoluteContentSize.Y + 10)
+end)
+
+--// sua função createSwitch (copiada exatamente e usando scrollFrame)
+local function createSwitch(labelText, defaultOn)
+	local holder = Instance.new("Frame")
+	holder.Size = UDim2.new(1, -12, 0, 44)
+	holder.Position = UDim2.new(0, 6, 0, 0)
+	holder.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+	holder.BorderSizePixel = 0
+	holder.Parent = scrollFrame
+
+	local lbl = Instance.new("TextLabel")
+	lbl.Size = UDim2.new(1, -80, 1, 0)
+	lbl.Position = UDim2.new(0, 10, 0, 0)
+	lbl.BackgroundTransparency = 1
+	lbl.Text = labelText
+	lbl.TextColor3 = Color3.fromRGB(230, 230, 230)
+	lbl.Font = Enum.Font.Gotham
+	lbl.TextSize = 18
+	lbl.TextXAlignment = Enum.TextXAlignment.Left
+	lbl.Parent = holder
+
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0, 64, 0, 28)
+	btn.Position = UDim2.new(1, -74, 0.5, -14)
+	btn.Text = ""
+	btn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+	btn.AutoButtonColor = false
+	btn.Parent = holder
+
+	local knob = Instance.new("Frame")
+	knob.Size = UDim2.new(0, 26, 0, 26)
+	knob.Position = UDim2.new(0, 1, 0, 1)
+	knob.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+	knob.BorderSizePixel = 0
+	knob.Parent = btn
+
+	local uiCorner1, uiCorner2 = Instance.new("UICorner"), Instance.new("UICorner")
+	uiCorner1.CornerRadius = UDim.new(0, 14); uiCorner1.Parent = btn
+	uiCorner2.CornerRadius = UDim.new(0, 13); uiCorner2.Parent = knob
+
+	local state = defaultOn and true or false
+	local function apply(on)
+		state = on
+		local targetX = on and 37 or 1
+		local bg = on and Color3.fromRGB(0, 170, 90) or Color3.fromRGB(100, 100, 100)
+		TweenService:Create(knob, TweenInfo.new(0.15), {Position = UDim2.new(0, targetX, 0, 1)}):Play()
+		TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = bg}):Play()
+	end
+	btn.MouseButton1Click:Connect(function() apply(not state) end)
+	apply(state)
+
+	return function() return state end, apply
+end
+
+--// Criar 3 switches (por padrão ON)
+local getPlayerESP, setPlayerESP = createSwitch("1) Player ESP (Highlight + Skeleton)", true)
+local getNameESP,   setNameESP   = createSwitch("2) Name ESP (nome acima)", true)
+local getHealthESP, setHealthESP = createSwitch("3) Health Bar (vertical)", true)
+
+--// Funções utilitárias
+local function safeNumberValue(parent, name)
+	if not parent then return nil end
+	local v = parent:FindFirstChild(name)
+	if v and (type(v.Value) == "number" or tonumber(v.Value) ~= nil) then
+		return tonumber(v.Value)
+	end
+	return nil
+end
+
+local function getPlayerTeam(player)
+	if not player then return nil end
+	local status = player:FindFirstChild("Status")
+	if not status then return nil end
+	local team = status:FindFirstChild("Team")
+	if not team then return nil end
+	return tostring(team.Value)
+end
+
+local function isEnemy(player)
+	local myTeam = getPlayerTeam(LocalPlayer)
+	local otherTeam = getPlayerTeam(player)
+	if not myTeam or not otherTeam then return false end
+	return myTeam ~= otherTeam
+end
+
+-- Busca robusta por HumanoidRootPart (vários caminhos que você mencionou)
+local function findHRP(player)
+	-- 1) Character.HumanoidRootPart
+	if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+		return player.Character:FindFirstChild("HumanoidRootPart"), player.Character
+	end
+	-- 2) player.Ragdoll.HumanoidRootPart (você mencionou esse caminho)
+	local ok, rag = pcall(function() return player:FindFirstChild("Ragdoll") end)
+	if ok and rag and rag:FindFirstChild("HumanoidRootPart") then
+		return rag:FindFirstChild("HumanoidRootPart"), rag
+	end
+	-- 3) Character.Ragdoll.HumanoidRootPart (alguns jogos colocam ragdoll dentro do character)
+	if player.Character and player.Character:FindFirstChild("Ragdoll") and player.Character.Ragdoll:FindFirstChild("HumanoidRootPart") then
+		return player.Character.Ragdoll:FindFirstChild("HumanoidRootPart"), player.Character.Ragdoll
+	end
+	-- 4) workspace[player.Name].HumanoidRootPart
+	local wsModel = Workspace:FindFirstChild(player.Name)
+	if wsModel and wsModel:FindFirstChild("HumanoidRootPart") then
+		return wsModel:FindFirstChild("HumanoidRootPart"), wsModel
+	end
+	-- não achou
+	return nil, nil
+end
+
+--// Drawing skeleton helpers (SEU CÓDIGO adaptado)
+local function createLine(color)
+	local line = Drawing.new("Line")
+	line.Visible = false
+	line.Color = color or Color3.fromRGB(255, 0, 0)
+	line.Thickness = 2
+	line.Transparency = 1
+	return line
+end
+
+local function drawSkeleton(player)
+	if not getPlayerESP() then
+		-- desligado pelo toggle: garantir que as linhas estejam invisíveis
+		if espLines[player] then
+			for _, l in ipairs(espLines[player]) do
+				l.Visible = false
+			end
+		end
+		return
+	end
+
+	local character = player.Character
+	if not character then return end
+
+	local bonePairs = {
+		{"Head", "UpperTorso"},
+		{"UpperTorso", "LowerTorso"},
+		{"UpperTorso", "LeftUpperArm"},
+		{"LeftUpperArm", "LeftLowerArm"},
+		{"UpperTorso", "RightUpperArm"},
+		{"RightUpperArm", "RightLowerArm"},
+		{"LowerTorso", "LeftUpperLeg"},
+		{"LeftUpperLeg", "LeftLowerLeg"},
+		{"LowerTorso", "RightUpperLeg"},
+		{"RightUpperLeg", "RightLowerLeg"},
+	}
+
+	if not espLines[player] then
+		espLines[player] = {}
+		for i = 1, #bonePairs do
+			table.insert(espLines[player], createLine(teamColors[getPlayerTeam(player)] or Color3.fromRGB(255,0,0)))
+		end
+	end
+
+	for i, pair in ipairs(bonePairs) do
+		local part0 = character:FindFirstChild(pair[1])
+		local part1 = character:FindFirstChild(pair[2])
+		local line = espLines[player][i]
+
+		if part0 and part1 and Camera then
+			local pos0, on0 = Camera:WorldToViewportPoint(part0.Position)
+			local pos1, on1 = Camera:WorldToViewportPoint(part1.Position)
+			if on0 and on1 then
+				line.From = Vector2.new(pos0.X, pos0.Y)
+				line.To = Vector2.new(pos1.X, pos1.Y)
+				line.Visible = true
+			else
+				line.Visible = false
+			end
+		else
+			if line then line.Visible = false end
+		end
+	end
+end
+
+local function clearSkeleton(player)
+	if espLines[player] then
+		for _, line in ipairs(espLines[player]) do
+			pcall(function() line:Remove() end)
+		end
+		espLines[player] = nil
+	end
+end
+
+--// Health bar + Highlight + Name — baseado no seu código da Healt bar
+local function createESP(player)
+	if not player or player == LocalPlayer then return end
+	if espObjects[player] then return end
+
+	-- checar time
+	local team = getPlayerTeam(player)
+	local localTeam = getPlayerTeam(LocalPlayer)
+	if not team then return end
+	if team == localTeam then return end
+
+	-- checar HRP
+	local hrp, model = findHRP(player)
+	if not hrp then return end
+
+	-- Highlight (parent no CoreGui como você usou)
+	local highlight = Instance.new("Highlight")
+	highlight.Adornee = model or (player.Character and player.Character) or hrp
+	highlight.FillColor = teamColors[team] or Color3.new(1,1,1)
+	highlight.OutlineColor = Color3.new(1,1,1)
+	highlight.Parent = CoreGui
+	highlight.Name = player.Name.."_Highlight"
+	highlight.Enabled = getPlayerESP() -- inicia conforme toggle
+
+	-- Name ESP (BillboardGui)
+	local nameGui = Instance.new("BillboardGui")
+	nameGui.Adornee = hrp
+	nameGui.Size = UDim2.new(0, 140, 0, 22)
+	nameGui.StudsOffset = Vector3.new(0, 3.2, 0)
+	nameGui.AlwaysOnTop = true
+	nameGui.Parent = CoreGui
+	nameGui.Name = player.Name.."_NameGui"
+
+	local nameLbl = Instance.new("TextLabel", nameGui)
+	nameLbl.BackgroundTransparency = 1
+	nameLbl.Size = UDim2.new(1,0,1,0)
+	nameLbl.TextScaled = true
+	nameLbl.Font = Enum.Font.GothamBold
+	nameLbl.TextColor3 = highlight.FillColor
+	nameLbl.TextStrokeTransparency = 0.5
+	nameLbl.Text = player.Name
+	nameGui.Enabled = getNameESP()
+
+	-- Health GUI (usando seu design)
+	local healthGui = Instance.new("BillboardGui")
+	healthGui.Adornee = hrp
+	healthGui.Size = UDim2.new(0, 20, 0, 80)
+	healthGui.StudsOffset = Vector3.new(-2.5, 2, 0)
+	healthGui.AlwaysOnTop = true
+	healthGui.Parent = CoreGui
+	healthGui.Name = player.Name.."_HealthGui"
+	healthGui.Enabled = getHealthESP()
+
+	local bg = Instance.new("Frame", healthGui)
+	bg.Size = UDim2.new(1, 0, 1, 0)
+	bg.BackgroundColor3 = Color3.new(0, 0, 0)
+	bg.BorderSizePixel = 1
+
+	local healthBar = Instance.new("Frame", bg)
+	healthBar.BackgroundColor3 = Color3.new(0, 1, 0)
+	healthBar.AnchorPoint = Vector2.new(0, 1)
+	healthBar.Position = UDim2.new(0, 0, 1, 0)
+	healthBar.Size = UDim2.new(1, 0, 1, 0)
+
+	local healthText = Instance.new("TextLabel", bg)
+	healthText.Size = UDim2.new(1, 0, 1, 0)
+	healthText.BackgroundTransparency = 1
+	healthText.TextColor3 = Color3.new(1,1,1)
+	healthText.Font = Enum.Font.GothamBold
+	healthText.TextScaled = true
+	healthText.TextStrokeColor3 = Color3.new(0, 0, 0)
+	healthText.TextStrokeTransparency = 0
+	healthText.Text = "100/100"
+
+	espObjects[player] = {
+		player = player,
+		highlight = highlight,
+		nameGui = nameGui,
+		nameLbl = nameLbl,
+		healthGui = healthGui,
+		healthBar = healthBar,
+		healthText = healthText,
+		model = model,
+		hrp = hrp
+	}
+end
+
+local function cleanupESP(player)
+	if not player then return end
+	-- skeleton
+	clearSkeleton(player)
+	-- GUIs/highlight
+	local o = espObjects[player]
+	if o then
+		pcall(function()
+			if o.highlight and o.highlight.Parent then o.highlight:Destroy() end
+			if o.nameGui and o.nameGui.Parent then o.nameGui:Destroy() end
+			if o.healthGui and o.healthGui.Parent then o.healthGui:Destroy() end
+		end)
+		espObjects[player] = nil
+	end
+end
+
+-- Atualiza as ESPs (chamado a cada RenderStepped)
+local function updateESP()
+	for _, player in ipairs(Players:GetPlayers()) do
+		if player == LocalPlayer then
+			-- não mostramos ESP do próprio localplayer
+			if espObjects[player] then cleanupESP(player) end
+		else
+			if isEnemy(player) then
+				-- garantir objetos
+				if not espObjects[player] then
+					createESP(player)
+				end
+
+				local o = espObjects[player]
+				if o then
+					-- atualizar highlight (cor e ativação)
+					local team = getPlayerTeam(player)
+					local color = teamColors[team] or Color3.fromRGB(255,255,255)
+					if o.highlight then
+						o.highlight.FillColor = color
+						o.highlight.OutlineColor = color
+						o.highlight.Enabled = getPlayerESP()
+					end
+
+					-- Name
+					if o.nameLbl then
+						o.nameLbl.Text = player.Name
+						o.nameLbl.TextColor3 = color
+						o.nameGui.Enabled = getNameESP()
+					end
+
+					-- Health: ler NRPBS.Health / MaxHealth (com fallback)
+					if o.healthBar and o.healthText then
+						if getHealthESP() then
+							local hp, maxHp = 100, 100
+							local nrpbs = player:FindFirstChild("NRPBS")
+							if nrpbs then
+								local h = safeNumberValue(nrpbs, "Health")
+								local m = safeNumberValue(nrpbs, "MaxHealth")
+								if h then hp = h end
+								if m then maxHp = m end
+							else
+								-- fallback humanoid
+								local humanoid = player.Character and player.Character:FindFirstChildWhichIsA("Humanoid")
+								if humanoid then
+									hp = tonumber(humanoid.Health) or hp
+									maxHp = tonumber(humanoid.MaxHealth) or maxHp
+								end
+							end
+
+							if maxHp == 0 then maxHp = 1 end
+							local ratio = math.clamp(hp / maxHp, 0, 1)
+							o.healthText.Text = string.format("%d/%d", math.floor(hp), math.floor(maxHp))
+
+							local col = (ratio > 0.7) and Color3.fromRGB(0,255,0)
+									or (ratio > 0.4) and Color3.fromRGB(255,165,0)
+									or Color3.fromRGB(255,0,0)
+							-- Tween suave (se falhar, aplica direto)
+							local ok, err = pcall(function()
+								TweenService:Create(o.healthBar, TweenInfo.new(0.12, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+									{Size = UDim2.new(1, 0, ratio, 0), BackgroundColor3 = col}):Play()
+							end)
+							if not ok then
+								o.healthBar.Size = UDim2.new(1,0,ratio,0)
+								o.healthBar.BackgroundColor3 = col
+							end
+							o.healthGui.Enabled = true
+						else
+							o.healthGui.Enabled = false
+						end
+					end
+
+					-- Skeleton (desenha apenas se PlayerESP estiver ligado)
+					if getPlayerESP() then
+						drawSkeleton(player)
+					else
+						clearSkeleton(player)
+					end
+				end
+			else
+				-- mesmo time ou sem time -> destruir/quitar ESP
+				if espObjects[player] then cleanupESP(player) end
+			end
+		end
+	end
+end
+
+-- Eventos
+Players.PlayerRemoving:Connect(function(pl) cleanupESP(pl); clearSkeleton(pl) end)
+Players.PlayerAdded:Connect(function(pl)
+	-- aguardar character / status
+	pl.CharacterAdded:Connect(function() task.wait(0.6); if isEnemy(pl) then createESP(pl) end end)
+end)
+
+-- Inicializar (para jogadores já presentes)
+for _, p in ipairs(Players:GetPlayers()) do
+	if p ~= LocalPlayer then
+		if isEnemy(p) then createESP(p) end
+		p.CharacterAdded:Connect(function() task.wait(0.6); if isEnemy(p) then createESP(p) end end)
+	end
+end
+
+-- Loop leve de render
+RunService.RenderStepped:Connect(function()
+	local ok, err = pcall(updateESP)
+	if not ok then
+		-- opcional: print para debugar
+		warn("ESP update erro:", err)
+	end
+end)
+
+-- Ajustar rolagem automática
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y)
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	scrollFrame.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y)
+end)
+
+-- Minimizar/maximizar lógica
+local isMinimized = false
+
+minimizeBtn.MouseButton1Click:Connect(function()
+	scrollFrame.Visible = false
+	mainFrame.Size = UDim2.new(0, 315, 0, 35)
+	isMinimized = true
+end)
+
+maximizeBtn.MouseButton1Click:Connect(function()
+	if isMinimized then
+		scrollFrame.Visible = true
+		mainFrame.Size = UDim2.new(0, 315, 0, 350)
+		isMinimized = false
+	end
+end)
+
+print("ESP completo carregado. Use os toggles no menu para ativar/desativar.")
