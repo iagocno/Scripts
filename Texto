@@ -7,7 +7,7 @@ workspace.Mobs.Nome__Bot.Humanoid.MaxHealth VIDA PLAYER: workspace.NomeDoPlayer.
 Existem 2 team: team 1: Vermelho team 2: Azul
 Não mostrar Player ESP da pessoas do meu time, aqui o caminho para você criar essa lógica: game:GetService("Players").LocalPlayer.Team
 
-Não mostrar Player ESP dos bots do meu time, aqui o caminho para você criar essa lógica: workspace.Mobs.Nome__Bot.Team
+Não mostrar Player ESP DOS BOTS do meu time, aqui o caminho para você criar essa lógica: workspace.Mobs.Nome__Bot.Team PARA PLAYER: workspace.NomeDoPlayer.Team
 
 SUBSTITUA TODOS CAMINHOS QUE EU MANDEI NESSES ABAIXO⬇️
 HumanoidRootPart tem muitos, mais vou mandar os caminhos que eu acho que pode ser.
