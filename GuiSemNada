@@ -1,0 +1,186 @@
+-- GUi completo: Toggle bonito (createSwitch)
+-- COLE como LocalScript (StarterPlayerScripts) ou execute no cliente com seu executor.
+
+--// Serviços
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+local Workspace = game:GetService("Workspace")
+local Camera = workspace.CurrentCamera
+
+local LocalPlayer = Players.LocalPlayer
+
+--// GUI principal (base) - onde o createSwitch vai inserir os switches (usa scrollFrame)
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "WallhackPlus_Plus_GUI"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = CoreGui -- se algum jogo impedir, mova para PlayerGui; por padrão você pediu CoreGui em códigos anteriores
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 315, 0, 350)
+mainFrame.Position = UDim2.new(0.7, 0, 0.3, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+mainFrame.BorderSizePixel = 2
+mainFrame.BorderColor3 = Color3.fromRGB(80, 80, 80)
+mainFrame.Active = true
+mainFrame.Draggable = true
+mainFrame.Parent = screenGui
+
+-- Title Bar
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 35)
+titleBar.BackgroundColor3 = Color3.fromRGB(90, 0, 150)
+titleBar.BorderSizePixel = 0
+titleBar.Parent = mainFrame
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Size = UDim2.new(1, -90, 1, 0)
+titleLabel.Position = UDim2.new(0, 5, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "ESP-Plus+"
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 20
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.Parent = titleBar
+
+-- Fechar
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.new(0, 30, 0, 30)
+closeBtn.Position = UDim2.new(1, -35, 0, 2)
+closeBtn.BackgroundColor3 = Color3.fromRGB(170, 0, 0)
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1, 1, 1)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 18
+closeBtn.Parent = titleBar
+
+closeBtn.MouseButton1Click:Connect(function()
+	screenGui:Destroy()
+end)
+
+-- Minimizar
+local minimizeBtn = Instance.new("TextButton")
+minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
+minimizeBtn.Position = UDim2.new(1, -105, 0, 2)
+minimizeBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+minimizeBtn.Text = "-"
+minimizeBtn.TextColor3 = Color3.new(1, 1, 1)
+minimizeBtn.Font = Enum.Font.GothamBold
+minimizeBtn.TextSize = 18
+minimizeBtn.Parent = titleBar
+
+-- Maximizar
+local maximizeBtn = Instance.new("TextButton")
+maximizeBtn.Size = UDim2.new(0, 30, 0, 30)
+maximizeBtn.Position = UDim2.new(1, -70, 0, 2)
+maximizeBtn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+maximizeBtn.Text = "▢"
+maximizeBtn.TextColor3 = Color3.new(1, 1, 1)
+maximizeBtn.Font = Enum.Font.GothamBold
+maximizeBtn.TextSize = 18
+maximizeBtn.Parent = titleBar
+
+-- Scrolling Frame
+local scrollFrame = Instance.new("ScrollingFrame")
+scrollFrame.Size = UDim2.new(1, 0, 1, -35)
+scrollFrame.Position = UDim2.new(0, 0, 0, 35)
+scrollFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+scrollFrame.BorderSizePixel = 0
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+scrollFrame.ScrollBarThickness = 8
+scrollFrame.Visible = true
+scrollFrame.Parent = mainFrame
+
+local layout = Instance.new("UIListLayout", scrollFrame)
+layout.Padding = UDim.new(0,6)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+    scrollFrame.CanvasSize = UDim2.new(0,0,0,layout.AbsoluteContentSize.Y + 10)
+end)
+
+--// sua função createSwitch (copiada exatamente e usando scrollFrame)
+local function createSwitch(labelText, defaultOn)
+	local holder = Instance.new("Frame")
+	holder.Size = UDim2.new(1, -12, 0, 44)
+	holder.Position = UDim2.new(0, 6, 0, 0)
+	holder.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+	holder.BorderSizePixel = 0
+	holder.Parent = scrollFrame
+
+	local lbl = Instance.new("TextLabel")
+	lbl.Size = UDim2.new(1, -80, 1, 0)
+	lbl.Position = UDim2.new(0, 10, 0, 0)
+	lbl.BackgroundTransparency = 1
+	lbl.Text = labelText
+	lbl.TextColor3 = Color3.fromRGB(230, 230, 230)
+	lbl.Font = Enum.Font.Gotham
+	lbl.TextSize = 18
+	lbl.TextXAlignment = Enum.TextXAlignment.Left
+	lbl.Parent = holder
+
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0, 64, 0, 28)
+	btn.Position = UDim2.new(1, -74, 0.5, -14)
+	btn.Text = ""
+	btn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+	btn.AutoButtonColor = false
+	btn.Parent = holder
+
+	local knob = Instance.new("Frame")
+	knob.Size = UDim2.new(0, 26, 0, 26)
+	knob.Position = UDim2.new(0, 1, 0, 1)
+	knob.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+	knob.BorderSizePixel = 0
+	knob.Parent = btn
+
+	local uiCorner1, uiCorner2 = Instance.new("UICorner"), Instance.new("UICorner")
+	uiCorner1.CornerRadius = UDim.new(0, 14); uiCorner1.Parent = btn
+	uiCorner2.CornerRadius = UDim.new(0, 13); uiCorner2.Parent = knob
+
+	local state = defaultOn and true or false
+	local function apply(on)
+		state = on
+		local targetX = on and 37 or 1
+		local bg = on and Color3.fromRGB(0, 170, 90) or Color3.fromRGB(100, 100, 100)
+		TweenService:Create(knob, TweenInfo.new(0.15), {Position = UDim2.new(0, targetX, 0, 1)}):Play()
+		TweenService:Create(btn, TweenInfo.new(0.15), {BackgroundColor3 = bg}):Play()
+	end
+	btn.MouseButton1Click:Connect(function() apply(not state) end)
+	apply(state)
+
+	return function() return state end, apply
+end
+
+--// Criar 3 switches (por padrão ON)
+local getPlayerESP, setPlayerESP = createSwitch("1) Player ESP (Highlight + Skeleton)", true)
+local getNameESP,   setNameESP   = createSwitch("2) Name ESP (nome acima)", true)
+local getHealthESP, setHealthESP = createSwitch("3) Health Bar (vertical)", true)
+
+-- COLOCAR SCRIPT AQUI
+
+-- Ajustar rolagem automática
+scrollFrame.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y)
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	scrollFrame.CanvasSize = UDim2.new(0, 0, 0, layout.AbsoluteContentSize.Y)
+end)
+
+-- Minimizar/maximizar lógica
+local isMinimized = false
+
+minimizeBtn.MouseButton1Click:Connect(function()
+	scrollFrame.Visible = false
+	mainFrame.Size = UDim2.new(0, 315, 0, 35)
+	isMinimized = true
+end)
+
+maximizeBtn.MouseButton1Click:Connect(function()
+	if isMinimized then
+		scrollFrame.Visible = true
+		mainFrame.Size = UDim2.new(0, 315, 0, 350)
+		isMinimized = false
+	end
+end)
+
+print("ESP completo carregado. Use os toggles no menu para ativar/desativar.")
