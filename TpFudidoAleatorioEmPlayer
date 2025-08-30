@@ -1,0 +1,64 @@
+-- Configuração do FOV (Campo de Visão)
+local fov = 60  -- FOV de 60 graus, você pode ajustar conforme necessário
+local aimSpeed = 0.1  -- Velocidade de movimentação da mira
+
+-- Função para calcular a distância entre dois pontos
+local function distancia(p1, p2)
+    return (p1 - p2).Magnitude
+end
+
+-- Função para calcular o ângulo entre o vetor de visão da câmera e o alvo
+local function calcularAngulo(cframe, alvo)
+    local direcao = (alvo - cframe.Position).unit
+    local angulo = math.deg(math.acos(cframe.LookVector:Dot(direcao)))
+    return angulo
+end
+
+-- Função para encontrar a cabeça mais próxima dentro do FOV
+local function encontrarCabecaProxima(player)
+    local camera = game.Workspace.CurrentCamera
+    local alvoMaisProximo = nil
+    local distanciaMaisProxima = math.huge
+    local head = nil
+
+    -- Iterar por jogadores e mobs no jogo
+    for _, alvo in pairs(game.Workspace:GetChildren()) do
+        if alvo:IsA("Model") and alvo:FindFirstChild("Head") and alvo ~= player.Character then
+            local dist = distancia(camera.CFrame.Position, alvo.Head.Position)
+            
+            -- Calcular o ângulo entre a câmera e o alvo
+            local angulo = calcularAngulo(camera.CFrame, alvo.Head.Position)
+
+            -- Verificar se o alvo está dentro do FOV e se está mais próximo
+            if angulo <= fov and dist < distanciaMaisProxima then
+                alvoMaisProximo = alvo
+                distanciaMaisProxima = dist
+                head = alvo.Head.Position
+            end
+        end
+    end
+
+    return head
+end
+
+-- Função para mover a câmera suavemente em direção ao alvo
+local function miraSuave(player)
+    local camera = game.Workspace.CurrentCamera
+
+    -- Loop contínuo para ajustar a mira
+    while wait(0.05) do
+        local head = encontrarCabecaProxima(player)
+        
+        if head then
+            -- Calcular direção para o alvo
+            local direcao = (head - camera.CFrame.Position).unit
+            local novaCFrame = CFrame.new(camera.CFrame.Position, head)
+            
+            -- Aplicar um movimento suave da câmera em direção à cabeça do alvo
+            camera.CFrame = camera.CFrame:Lerp(novaCFrame, aimSpeed)
+        end
+    end
+end
+
+-- Iniciar a mira para o jogador atual
+miraSuave(game.Players.LocalPlayer)
