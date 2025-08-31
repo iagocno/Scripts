@@ -1,0 +1,32 @@
+game:GetService("ReplicatedStorage").Remotes.SpinPrizeEvent:FireServer(4)--DominusPet
+game:GetService("ReplicatedStorage").Remotes.SpinPrizeEvent:FireServer(2)--2,5K Cash
+game:GetService("ReplicatedStorage").Remotes.SpinPrizeEvent:FireServer(5)--250 Gemas
+game:GetService("ReplicatedStorage").Remotes.SpinPrizeEvent:FireServer(8)--10X Cash
+game:GetService("ReplicatedStorage").Remotes.TreasureEvent:FireServer("Cup15")--100K de Troféus
+game:GetService("ReplicatedStorage").Remotes.TreasureEvent:FireServer("Blackhole1")--50T até 200T Cash
+game:GetService("ReplicatedStorage").Remotes.TreasureEvent:FireServer("Blackhole2")--2,5K até 3,0K de Gemas
+game:GetService("ReplicatedStorage").Remotes.TreasureEvent:FireServer("Blackhole3")--🎲Spins, Gemas e Cash
+
+#AbrirOvo - Apenas mude número do World e número do Egg
+game:GetService("ReplicatedStorage").PetRemotes.HatchServer:InvokeServer(game:GetService("Workspace").World15.Prompts.Eggs.Egg31)
+
+#Upgrades
+game:GetService("ReplicatedStorage").Remotes.UpgradeEvent:FireServer("WalkSpeed",0)
+game:GetService("ReplicatedStorage").Remotes.UpgradeEvent:FireServer("Strength",0)
+game:GetService("ReplicatedStorage").Remotes.UpgradeEvent:FireServer("GemChance",0)
+game:GetService("ReplicatedStorage").Remotes.UpgradeEvent:FireServer("PetLuck",0)
+
+#UpgradesVOID
+game:GetService("ReplicatedStorage").VoidWorld.Remotes.UpgradePickaxe:FireServer("GemsT1",0,"DigPowerPoints")
+game:GetService("ReplicatedStorage").VoidWorld.Remotes.UpgradePickaxe:FireServer("GemsT1",0,"SpeedPoints")
+game:GetService("ReplicatedStorage").VoidWorld.Remotes.UpgradePickaxe:FireServer("GemsT1",0,"CashMultiPoints")
+game:GetService("ReplicatedStorage").VoidWorld.Remotes.PickaxeTierUp:FireServer("Riftbreaker")
+
+#Evento
+while wait() do
+   game:GetService("ReplicatedStorage").Remotes.TreasureEvent:FireServer("BloodDiamond")
+end
+
+#Testes
+game:GetService("ReplicatedStorage").BloodDiamondEvent.Remotes.BuyItemEvent:FireServer("VFXs","Bloody")
+game:GetService("ReplicatedStorage").Remotes.EquipVFXEvent:FireServer("Bloody")
