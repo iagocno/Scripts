@@ -1,0 +1,95 @@
+-- Teleport Instantâneo Seguro (HomeBase)
+-- Cole no executor como LocalScript
+
+local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
+local CoreGui = game:GetService("CoreGui")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+
+-- Remove GUI antiga se já existir
+if CoreGui:FindFirstChild("TeleportGUI_HomeBase") then
+    CoreGui.TeleportGUI_HomeBase:Destroy()
+end
+
+-- Notificação
+local function notify(msg)
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = "Teleport",
+            Text = msg,
+            Duration = 3
+        })
+    end)
+end
+
+-- Criar GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TeleportGUI_HomeBase"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = CoreGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 280, 0, 100)
+frame.Position = UDim2.new(0.7, 0, 0.35, 0)
+frame.BackgroundColor3 = Color3.fromRGB(35,35,35)
+frame.Active = true
+frame.Draggable = true
+frame.Parent = screenGui
+
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(1, -20, 0, 60)
+button.Position = UDim2.new(0, 10, 0, 20)
+button.BackgroundColor3 = Color3.fromRGB(90, 0, 150)
+button.Text = "Teleportar para HomeBase"
+button.TextColor3 = Color3.new(1,1,1)
+button.Font = Enum.Font.GothamBold
+button.TextSize = 18
+button.Parent = frame
+
+-- Função de teleport instantâneo seguro
+local function safeInstantTeleport(targetPos)
+    local char = player.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then
+        notify("Personagem não pronto")
+        return
+    end
+
+    local hrp = char.HumanoidRootPart
+
+    -- Desabilita colisões do personagem para evitar morrer preso
+    for _, part in ipairs(char:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+
+    -- Teleport instantâneo + pequeno offset para não colidir com chão
+    hrp.CFrame = CFrame.new(targetPos + Vector3.new(0, 3, 0))
+    hrp.Velocity = Vector3.new(0, 0, 0)
+
+    -- Reabilita colisões
+    task.delay(0.3, function()
+        for _, part in ipairs(char:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.CanCollide = true
+            end
+        end
+    end)
+
+    notify("Teleport concluído!")
+end
+
+-- Botão -> Teleport
+button.MouseButton1Click:Connect(function()
+    local homeBase = Workspace:FindFirstChild("__THINGS") and Workspace.__THINGS:FindFirstChild("HomeBase")
+    if not homeBase then
+        notify("HomeBase não encontrado")
+        return
+    end
+
+    safeInstantTeleport(homeBase.Position)
+end)
+
+notify("GUI pronta — clique para teleportar instantâneo ao HomeBase.")
