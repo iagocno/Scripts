@@ -40,8 +40,14 @@ game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:Fire
 game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("Mateo",1)
 game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
 
--For PotHotspot
+--For PotHotspot
 game:GetService("ReplicatedStorage").Events.Shop.PlayerAttemptsCashPurchaseOfBrainrot:FireServer("PotHotspot")
 game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:FireServer("PotHotspot",1)
 game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("PotHotspot",1)
+game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
+
+--For TeTeTeSahur
+game:GetService("ReplicatedStorage").Events.Shop.PlayerAttemptsCashPurchaseOfBrainrot:FireServer("TeTeTeSahur")
+game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:FireServer("TeTeTeSahur",1)
+game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("TeTeTeSahur",1)
 game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
