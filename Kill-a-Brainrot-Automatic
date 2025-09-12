@@ -9,3 +9,27 @@ game:GetService("ReplicatedStorage").Events.Shop.PlayerAttemptsCashPurchaseOfBra
 game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:FireServer("Garamaran",1)
 game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("Garamaran",1)
 game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
+
+--For FrigoCamelo
+game:GetService("ReplicatedStorage").Events.Shop.PlayerAttemptsCashPurchaseOfBrainrot:FireServer("FrigoCamelo")
+game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:FireServer("FrigoCamelo",1)
+game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("FrigoCamelo",1)
+game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
+
+--For TralaleroTralala
+game:GetService("ReplicatedStorage").Events.Shop.PlayerAttemptsCashPurchaseOfBrainrot:FireServer("TralaleroTralala")
+game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:FireServer("TralaleroTralala",1)
+game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("TralaleroTralala",1)
+game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
+
+--For CappuccinoAssassino
+game:GetService("ReplicatedStorage").Events.Shop.PlayerAttemptsCashPurchaseOfBrainrot:FireServer("CappuccinoAssassino")
+game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:FireServer("CappuccinoAssassino",1)
+game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("CappuccinoAssassino",1)
+game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
+
+--For VolantinoElicottero
+game:GetService("ReplicatedStorage").Events.Shop.PlayerAttemptsCashPurchaseOfBrainrot:FireServer("VolantinoElicottero")
+game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:FireServer("VolantinoElicottero",1)
+game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("VolantinoElicottero",1)
+game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
