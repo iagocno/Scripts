@@ -1,0 +1,5 @@
+while wait() do
+   game:GetService("ReplicatedStorage").Remotes.GameHandler:FireServer({["Info"] = "Mine"})
+end
+
+game:GetService("ReplicatedStorage").Remotes.GameHandler:FireServer({["Info"] = "EndReached"})
