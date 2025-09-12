@@ -33,3 +33,9 @@ game:GetService("ReplicatedStorage").Events.Shop.PlayerAttemptsCashPurchaseOfBra
 game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:FireServer("VolantinoElicottero",1)
 game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("VolantinoElicottero",1)
 game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
+
+--For Mateo
+game:GetService("ReplicatedStorage").Events.Shop.PlayerAttemptsCashPurchaseOfBrainrot:FireServer("Mateo")
+game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:FireServer("Mateo",1)
+game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("Mateo",1)
+game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
