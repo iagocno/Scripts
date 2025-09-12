@@ -1,0 +1,11 @@
+--For ThungThungSahur
+game:GetService("ReplicatedStorage").Events.Shop.PlayerAttemptsCashPurchaseOfBrainrot:FireServer("ThungThungSahur")
+game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:FireServer("ThungThungSahur",1)
+game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("ThungThungSahur",1)
+game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
+
+--For Garamaran
+game:GetService("ReplicatedStorage").Events.Shop.PlayerAttemptsCashPurchaseOfBrainrot:FireServer("Garamaran")
+game:GetService("ReplicatedStorage").Events.Base.PlayerAttemptsToUnlockCage:FireServer("Garamaran",1)
+game:GetService("ReplicatedStorage").Events.Base.PlayerKilledBrainrot:FireServer("Garamaran",1)
+game:GetService("ReplicatedStorage").Events.Sell.PlayerAttemptedSellingInventory:FireServer()
