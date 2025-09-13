@@ -1,0 +1,3 @@
+
+--Upar para Gold e Rainbow
+game:GetService("ReplicatedStorage").Remotes.Pets.UpgradePet:FireServer("IdDoPet",{"IdDoPet"})
