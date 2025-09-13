@@ -1,0 +1,17 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+local checkpoints = game:GetService("Workspace"):WaitForChild("Checkpoints")
+
+for i = 1, 100 do
+    local checkpoint = checkpoints:FindFirstChild(tostring(i))
+    if checkpoint then
+        -- Adiciona 2 studs acima do checkpoint
+        local targetPosition = checkpoint.Position + Vector3.new(0, 2, 0)
+        humanoidRootPart.CFrame = CFrame.new(targetPosition)
+        wait(1) -- espera 1 segundo antes de ir para o próximo
+    else
+        warn("Checkpoint " .. i .. " não encontrado.")
+    end
+end
