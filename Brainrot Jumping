@@ -24,3 +24,19 @@ game:GetService("ReplicatedStorage").Remotes.Roulette.GiveOutReward:FireServer({
     ["rarity"] = "Exclusive",
     ["chance"] = 1
 })
+
+--Rebirth auto
+while wait() do
+   game:GetService("ReplicatedStorage").Events.Rebirth:FireServer()
+end
+
+--Ascend auto
+while wait() do
+   game:GetService("ReplicatedStorage").Events.Ascend:FireServer()
+end
+
+--Adicionar dinheiro
+game:GetService("ReplicatedStorage").Remotes.Roulette.GiveOutReward:FireServer({["value"] = 1e43,["type"] = "Money",["chance"] = 0.3})
+
+--Adicionar trofeu
+game:GetService("ReplicatedStorage").Events.LayerChanged:FireServer("Layer6")
