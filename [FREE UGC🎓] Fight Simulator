@@ -1,0 +1,7 @@
+--Auto click
+while wait() do
+   game:GetService("ReplicatedStorage").RedEvent:FireServer({[""] = {}},{})
+end
+
+--Abrir ovo a distância - Só mudar o número e mudara o ovo.
+game:GetService("ReplicatedStorage").RedEvent:FireServer({[""] = {1,"E",{}}},{})
