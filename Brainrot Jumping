@@ -1,3 +1,26 @@
 
+--Deletar Pet *Bugado* - Caminho -> game:GetService("Players").LocalPlayer.PlayerGui.PetsGUI.BackgroundFrame.MainFrame.ScrollingFrame
+game:GetService("ReplicatedStorage").Remotes.Pets.DeletePets:FireServer({"IdDoPet"})
+
 --Upar para Gold e Rainbow
 game:GetService("ReplicatedStorage").Remotes.Pets.UpgradePet:FireServer("IdDoPet",{"IdDoPet"})
+
+--Aumentar de tamanho
+game:GetService("ReplicatedStorage").Remotes.Pets.UpgradePetEvolve:FireServer("IdDoPet",{"IdDoPet"})
+
+--Pegar qualquer Pet
+--Pet x10K
+game:GetService("ReplicatedStorage").Remotes.Roulette.GiveOutReward:FireServer({
+    ["type"] = "Pet",
+    ["name"] = "Spore Serpent",
+    ["rarity"] = "Secret",
+    ["chance"] = 0.01
+})
+
+--Pet 200% Robux
+game:GetService("ReplicatedStorage").Remotes.Roulette.GiveOutReward:FireServer({
+    ["type"] = "Pet",
+    ["name"] = "Plasma Wolflord",
+    ["rarity"] = "Exclusive",
+    ["chance"] = 1
+})
