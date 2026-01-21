@@ -1,0 +1,59 @@
+TESTE 1
+
+local brainrot = game:GetService("ReplicatedStorage")
+    .Shared.Utilities.NetworkUtility.Functions.BrainrotAttack
+
+for _, obj in ipairs(workspace.Map:GetChildren()) do
+    -- filtra apenas Models com nome grande (UUID)
+    if obj:IsA("Model") and #obj.Name >= 30 then
+        task.spawn(function()
+            pcall(function()
+                brainrot:InvokeServer(obj.Name)
+            end)
+        end)
+        task.wait(0.1) -- evita spam
+    end
+end
+
+TESTE 2
+
+local brainrot = game:GetService("ReplicatedStorage")
+    .Shared.Utilities.NetworkUtility.Functions.BrainrotAttack
+
+local function isUUID(name)
+    return string.match(name, "^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x+$")
+end
+
+for _, obj in ipairs(workspace.Map:GetChildren()) do
+    if obj:IsA("Model") and isUUID(obj.Name) then
+        task.spawn(function()
+            pcall(function()
+                brainrot:InvokeServer(obj.Name)
+            end)
+        end)
+        task.wait(0.1)
+    end
+end
+
+TESTE 3
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local brainrot = ReplicatedStorage.Shared.Utilities.NetworkUtility.Functions.BrainrotAttack
+
+-- Validação forte de UUID (server-side compatible)
+local function isUUID(name)
+    return typeof(name) == "string"
+        and #name >= 32
+        and name:match("^%x%x%x%x%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x%x%x%x%-%x+$") ~= nil
+end
+
+for _, obj in ipairs(workspace.Map:GetChildren()) do
+    if obj:IsA("Model") and isUUID(obj.Name) then
+        task.spawn(function()
+            pcall(function()
+                brainrot:InvokeServer(obj.Name)
+            end)
+        end)
+        task.wait(0.08) -- seguro contra flood / kick
+    end
+end
