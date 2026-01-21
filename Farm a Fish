@@ -1,0 +1,143 @@
+--// SERVICES
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UIS = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+
+--// REMOTES
+local container =
+	ReplicatedStorage.rbxts_include.node_modules
+	:FindFirstChild("@rbxts")
+	.remo.src.container
+
+local collectAllFish = container:FindFirstChild("bait.collectAllFish")
+local sellAllFish = container:FindFirstChild("sellFish.sellAllFish")
+
+--// STATES
+local collectRunning = false
+local sellRunning = false
+
+--// COLLECT ALL FISH LOOP (USANDO PONDS > BUILDINGS)
+task.spawn(function()
+	while true do
+		if collectRunning and collectAllFish then
+			local ponds = workspace:FindFirstChild("Ponds")
+			if ponds then
+				local pond = ponds:GetChildren()[3]
+				if pond and pond:FindFirstChild("Buildings") then
+					for _, bait in ipairs(pond.Buildings:GetChildren()) do
+						if not collectRunning then break end
+
+						pcall(function()
+							-- bait.Name = UID correto
+							collectAllFish:FireServer(bait.Name)
+						end)
+
+						task.wait(0.05) -- anti-flood
+					end
+				end
+			end
+		end
+		task.wait(0.3)
+	end
+end)
+
+--// SELL ALL FISH LOOP
+task.spawn(function()
+	while true do
+		if sellRunning and sellAllFish then
+			pcall(function()
+				sellAllFish:FireServer()
+			end)
+		end
+		task.wait(0.5)
+	end
+end)
+
+--// GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "FishAutoGUI"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.fromOffset(260, 170)
+frame.Position = UDim2.fromScale(0.5, 0.5)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+frame.BorderSizePixel = 0
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
+
+--// DRAG SYSTEM
+do
+	local dragging, dragStart, startPos
+
+	frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			dragStart = input.Position
+			startPos = frame.Position
+		end
+	end)
+
+	frame.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+
+	UIS.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local delta = input.Position - dragStart
+			frame.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
+		end
+	end)
+end
+
+--// TITLE
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 35)
+title.BackgroundTransparency = 1
+title.Text = "AUTO FISH FARM"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 14
+title.TextColor3 = Color3.new(1,1,1)
+
+--// TOGGLE CREATOR
+local function createToggle(text, y)
+	local btn = Instance.new("TextButton", frame)
+	btn.Size = UDim2.fromOffset(220, 40)
+	btn.Position = UDim2.new(0.5, 0, 0, y)
+	btn.AnchorPoint = Vector2.new(0.5, 0)
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 15
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.Text = text .. ": OFF"
+	btn.BackgroundColor3 = Color3.fromRGB(160, 40, 40)
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 10)
+	return btn
+end
+
+--// TOGGLES
+local collectToggle = createToggle("Collect All Fish", 45)
+local sellToggle = createToggle("Sell All Fish", 95)
+
+--// TOGGLE LOGIC
+collectToggle.MouseButton1Click:Connect(function()
+	collectRunning = not collectRunning
+	collectToggle.Text = "Collect All Fish: " .. (collectRunning and "ON" or "OFF")
+	collectToggle.BackgroundColor3 =
+		collectRunning and Color3.fromRGB(40,170,80) or Color3.fromRGB(160,40,40)
+end)
+
+sellToggle.MouseButton1Click:Connect(function()
+	sellRunning = not sellRunning
+	sellToggle.Text = "Sell All Fish: " .. (sellRunning and "ON" or "OFF")
+	sellToggle.BackgroundColor3 =
+		sellRunning and Color3.fromRGB(40,170,80) or Color3.fromRGB(160,40,40)
+end)
