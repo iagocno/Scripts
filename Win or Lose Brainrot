@@ -1,0 +1,150 @@
+--// SERVICES
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+
+--// VARS
+local Plots = workspace:WaitForChild("Prod"):WaitForChild("Plots")
+local revelarAtivo = false
+local connections = {}
+
+--// FUNÇÃO APPLY
+local function aplicar(cardImage)
+	if not revelarAtivo then return end
+
+	if cardImage:IsA("ImageLabel") then
+		if cardImage.BackgroundTransparency == 1 then
+			cardImage.ImageColor3 = Color3.fromRGB(255, 0, 0)
+		end
+
+		local conn
+		conn = cardImage:GetPropertyChangedSignal("BackgroundTransparency"):Connect(function()
+			if not revelarAtivo then
+				conn:Disconnect()
+				return
+			end
+
+			if cardImage.BackgroundTransparency == 1 then
+				cardImage.ImageColor3 = Color3.fromRGB(255, 0, 0)
+			end
+		end)
+
+		table.insert(connections, conn)
+	end
+end
+
+--// ATIVAR FUNÇÃO
+local function ativarRevelar()
+	-- Varre todos os plots
+	for _, plot in ipairs(Plots:GetChildren()) do
+		if plot.Name:match("^Plot_%d+") then
+
+			-- Listener para novos objetos
+			local conn
+			conn = plot.DescendantAdded:Connect(function(desc)
+				if revelarAtivo and desc.Name == "CardImage" and desc:IsA("ImageLabel") then
+					aplicar(desc)
+				end
+			end)
+			table.insert(connections, conn)
+
+			-- Aplica nos existentes
+			for _, desc in ipairs(plot:GetDescendants()) do
+				if desc.Name == "CardImage" and desc:IsA("ImageLabel") then
+					aplicar(desc)
+				end
+			end
+		end
+	end
+end
+
+--// DESATIVAR FUNÇÃO
+local function desativarRevelar()
+	for _, conn in ipairs(connections) do
+		pcall(function()
+			conn:Disconnect()
+		end)
+	end
+	table.clear(connections)
+end
+
+--// GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "RevealBombsGUI"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.fromOffset(260, 140)
+frame.Position = UDim2.fromScale(0.5, 0.5)
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+frame.BorderSizePixel = 0
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 14)
+
+--// DRAG
+do
+	local dragging, dragStart, startPos
+
+	frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = true
+			dragStart = input.Position
+			startPos = frame.Position
+		end
+	end)
+
+	frame.InputEnded:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			dragging = false
+		end
+	end)
+
+	UIS.InputChanged:Connect(function(input)
+		if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+			local delta = input.Position - dragStart
+			frame.Position = UDim2.new(
+				startPos.X.Scale,
+				startPos.X.Offset + delta.X,
+				startPos.Y.Scale,
+				startPos.Y.Offset + delta.Y
+			)
+		end
+	end)
+end
+
+--// TITLE
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 35)
+title.BackgroundTransparency = 1
+title.Text = "GAMEPASS 💣🔍"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 14
+title.TextColor3 = Color3.new(1,1,1)
+
+--// BUTTON
+local toggle = Instance.new("TextButton", frame)
+toggle.Size = UDim2.fromOffset(220, 45)
+toggle.Position = UDim2.new(0.5, 0, 0, 55)
+toggle.AnchorPoint = Vector2.new(0.5, 0)
+toggle.Font = Enum.Font.GothamBold
+toggle.TextSize = 16
+toggle.TextColor3 = Color3.new(1,1,1)
+toggle.Text = "REVELAR BOMBAS🃏💣: OFF"
+toggle.BackgroundColor3 = Color3.fromRGB(160, 40, 40)
+Instance.new("UICorner", toggle).CornerRadius = UDim.new(0, 10)
+
+--// TOGGLE LOGIC
+toggle.MouseButton1Click:Connect(function()
+	revelarAtivo = not revelarAtivo
+
+	if revelarAtivo then
+		toggle.Text = "REVELAR BOMBAS🃏💣: ON"
+		toggle.BackgroundColor3 = Color3.fromRGB(40, 170, 80)
+		ativarRevelar()
+	else
+		toggle.Text = "REVELAR BOMBAS🃏💣: OFF"
+		toggle.BackgroundColor3 = Color3.fromRGB(160, 40, 40)
+		desativarRevelar()
+	end
+end)
