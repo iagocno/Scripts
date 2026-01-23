@@ -1,0 +1,5 @@
+
+
+
+---Pescar qualquer peixe, so mudar o nome do peixe.
+game:GetService("ReplicatedStorage").Packages._Index:FindFirstChild("sleitnick_knit@1.7.0").knit.Services.FishService.RF.AddToInventory:InvokeServer("TridentaSphyrni","Catch")
