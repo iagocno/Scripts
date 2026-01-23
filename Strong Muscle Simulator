@@ -1,0 +1,2 @@
+---Pet OP
+game:GetService("ReplicatedStorage").Packages.Network.RemoteEventStorage.Uyari:FireServer(game:GetService("Players").LocalPlayer)
