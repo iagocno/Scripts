@@ -1,0 +1,19 @@
+local function FindAllRemoteEventsByName(name)
+    local results = {}
+
+    for _, obj in ipairs(game:GetDescendants()) do
+        if obj:IsA("RemoteEvent") and obj.Name == name then
+            table.insert(results, obj)
+        end
+    end
+
+    return results
+end
+
+local events = FindAllRemoteEventsByName("CollectLoot")
+
+print("Encontrados:", #events)
+
+for _, event in ipairs(events) do
+    event:FireServer()
+end
