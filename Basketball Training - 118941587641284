@@ -1,0 +1,49 @@
+-- FARM DE DINHEIRO AUTO
+local Event = game:GetService("ReplicatedStorage").Events.InvokeServerAction
+
+while true do
+Event:InvokeServer(
+    "Win",
+    "Ended",
+    1,
+    100,
+    1
+)
+
+    task.wait(0.1) -- espera 1 segundo
+end
+
+-- TREINAMENTO
+local Event = game:GetService("ReplicatedStorage").Events.RequestServerAction
+
+while true do
+Event:FireServer(
+    "Train",
+    "Increment",
+    12,
+    5
+)
+
+    task.wait(0.1) -- espera 1 segundo
+end
+
+local Event = game:GetService("ReplicatedStorage").Events.InvokeServerAction
+
+-- ABRIR OVOS
+for i = 1, 100 do
+    Event:InvokeServer(
+        "Eggs",
+        "RequestPurchase",
+        {
+        PetsToAutoDelete = {
+            "Turtle",
+            "Crab",
+			"Goldfish"
+        },
+            EggAmount = "max",
+            EggName = "Ocean"
+        }
+    )
+
+    task.wait(0.1) -- 100 ms entre chamadas
+end
