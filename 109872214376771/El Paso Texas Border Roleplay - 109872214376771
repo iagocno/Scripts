@@ -1,0 +1,197 @@
+-- LocalScript
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "Teleport GUI"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.fromOffset(260, 110)
+frame.Position = UDim2.new(0.5, -130, 0.5, -55)
+frame.BackgroundColor3 = Color3.fromRGB(35,35,35)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+local frameCorner = Instance.new("UICorner")
+frameCorner.CornerRadius = UDim.new(0,8)
+frameCorner.Parent = frame
+
+-- Barra superior
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1,0,0,30)
+topBar.BackgroundColor3 = Color3.fromRGB(30,30,30)
+topBar.BorderSizePixel = 0
+topBar.Parent = frame
+
+local topCorner = Instance.new("UICorner")
+topCorner.CornerRadius = UDim.new(0,8)
+topCorner.Parent = topBar
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1,-40,1,0)
+title.Position = UDim2.fromOffset(10,0)
+title.BackgroundTransparency = 1
+title.Text = "Teleport GUI"
+title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = topBar
+
+local closeBtn = Instance.new("TextButton")
+closeBtn.Size = UDim2.fromOffset(30,30)
+closeBtn.Position = UDim2.new(1,-30,0,0)
+closeBtn.BackgroundTransparency = 1
+closeBtn.Text = "X"
+closeBtn.TextColor3 = Color3.new(1,1,1)
+closeBtn.Font = Enum.Font.GothamBold
+closeBtn.TextSize = 16
+closeBtn.Parent = topBar
+
+-- Botão Teleport
+local teleportBtn = Instance.new("TextButton")
+teleportBtn.Size = UDim2.new(0.9,0,0,40)
+teleportBtn.Position = UDim2.new(0.05,0,0,50)
+teleportBtn.BackgroundColor3 = Color3.fromRGB(55,55,55)
+teleportBtn.BorderSizePixel = 0
+teleportBtn.Text = "Teleport"
+teleportBtn.TextColor3 = Color3.new(1,1,1)
+teleportBtn.Font = Enum.Font.GothamBold
+teleportBtn.TextSize = 14
+teleportBtn.Parent = frame
+
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0,6)
+btnCorner.Parent = teleportBtn
+
+-- Botão Teleport2
+local teleportBtn2 = Instance.new("TextButton")
+teleportBtn2.Size = UDim2.new(0.9,0,0,40)
+teleportBtn2.Position = UDim2.new(0.05,0,0,95)
+teleportBtn2.BackgroundColor3 = Color3.fromRGB(55,55,55)
+teleportBtn2.BorderSizePixel = 0
+teleportBtn2.Text = "Teleport2"
+teleportBtn2.TextColor3 = Color3.new(1,1,1)
+teleportBtn2.Font = Enum.Font.GothamBold
+teleportBtn2.TextSize = 14
+teleportBtn2.Parent = frame
+
+local btnCorner2 = Instance.new("UICorner")
+btnCorner2.CornerRadius = UDim.new(0,6)
+btnCorner2.Parent = teleportBtn2
+
+-- Teleport
+teleportBtn.MouseButton1Click:Connect(function()
+
+local character = player.Character
+if not character then
+	return
+end
+
+local hrp = character:FindFirstChild("HumanoidRootPart")
+if not hrp then
+	return
+end
+
+local target = workspace:WaitForChild("_MapWaypoints_"):WaitForChild("Gymbro")
+-- local target = workspace:WaitForChild("Map"):WaitForChild("El Paso"):WaitForChild("Locales"):WaitForChild("Barbell")
+
+hrp.CFrame = target.CFrame + Vector3.new(0,5,0)
+
+end)
+
+-- Teleport
+teleportBtn2.MouseButton1Click:Connect(function()
+
+local character = player.Character
+if not character then
+	return
+end
+
+local hrp = character:FindFirstChild("HumanoidRootPart")
+if not hrp then
+	return
+end
+
+local target = workspace:WaitForChild("CantArrestHere"):WaitForChild("Part")
+-- local target = workspace:WaitForChild("CAR SPAWNERS"):WaitForChild("Part")
+-- local target = workspace:WaitForChild("Smuggling"):WaitForChild("Props"):WaitForChild("Laundering"):WaitForChild("Washing Machine"):WaitForChild("MachineBase")
+
+hrp.CFrame = target.CFrame + Vector3.new(0,5,0)
+
+end)
+
+-- Fechar
+closeBtn.MouseButton1Click:Connect(function()
+frame.Visible = false
+end)
+
+-- Right Alt mostra/esconde
+local visible = true
+
+UserInputService.InputBegan:Connect(function(input, gpe)
+
+if gpe then
+	return
+end
+
+if input.KeyCode == Enum.KeyCode.RightAlt then
+	visible = not visible
+	frame.Visible = visible
+end
+
+end)
+
+-- Drag da janela
+local dragging = false
+local dragInput
+local dragStart
+local startPos
+
+topBar.InputBegan:Connect(function(input)
+
+if input.UserInputType == Enum.UserInputType.MouseButton1 then
+
+	dragging = true
+	dragStart = input.Position
+	startPos = frame.Position
+
+	input.Changed:Connect(function()
+
+		if input.UserInputState == Enum.UserInputState.End then
+			dragging = false
+		end
+	end)
+end
+
+end)
+
+topBar.InputChanged:Connect(function(input)
+
+if input.UserInputType == Enum.UserInputType.MouseMovement then
+	dragInput = input
+end
+
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+
+if dragging and input == dragInput then
+
+	local delta = input.Position - dragStart
+
+	frame.Position = UDim2.new(
+		startPos.X.Scale,
+		startPos.X.Offset + delta.X,
+		startPos.Y.Scale,
+		startPos.Y.Offset + delta.Y
+	)
+end
+
+end)
