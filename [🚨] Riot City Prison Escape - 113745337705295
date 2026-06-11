@@ -1,0 +1,380 @@
+-- LocalScript
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TextService = game:GetService("TextService")
+
+local player = Players.LocalPlayer
+
+local tituloGUI = "[🚨] Riot City Prison Escape"
+
+local textSize = TextService:GetTextSize(
+	tituloGUI,
+	16,
+	Enum.Font.GothamBold,
+	Vector2.new(math.huge, math.huge)
+)
+
+local normalWidth = math.max(250, textSize.X + 140)
+
+-- GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = tituloGUI
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.fromOffset(normalWidth, 200)
+frame.Position = UDim2.new(0.5, -normalWidth/2, 0.5, -100)
+frame.BackgroundColor3 = Color3.fromRGB(35,35,35)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+
+local frameCorner = Instance.new("UICorner")
+frameCorner.CornerRadius = UDim.new(0,8)
+frameCorner.Parent = frame
+
+-- Barra superior
+local topBar = Instance.new("Frame")
+topBar.Size = UDim2.new(1,0,0,30)
+topBar.BackgroundColor3 = Color3.fromRGB(30,30,30)
+topBar.BorderSizePixel = 0
+topBar.Parent = frame
+
+local topCorner = Instance.new("UICorner")
+topCorner.CornerRadius = UDim.new(0,8)
+topCorner.Parent = topBar
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1,-120,1,0)
+title.Position = UDim2.fromOffset(10,0)
+title.BackgroundTransparency = 1
+title.Text = tituloGUI
+title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.TextTruncate = Enum.TextTruncate.AtEnd
+title.Parent = topBar
+
+-- Botões da barra
+local function createTopButton(text, posX)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0,30,1,0)
+	btn.Position = UDim2.new(1,posX,0,0)
+	btn.BackgroundTransparency = 1
+	btn.Text = text
+	btn.TextColor3 = Color3.new(1,1,1)
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 16
+	btn.Parent = topBar
+	return btn
+end
+
+local minimizeBtn = createTopButton("-", -90)
+local maximizeBtn = createTopButton("▢", -60)
+local closeBtn = createTopButton("X", -30)
+
+-- Área dos botões
+local content = Instance.new("Frame")
+content.BackgroundTransparency = 1
+content.Position = UDim2.fromOffset(10,40)
+content.Size = UDim2.new(1,-20,1,-50)
+content.Parent = frame
+
+local layout = Instance.new("UIListLayout")
+layout.Padding = UDim.new(0,8)
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+layout.Parent = content
+
+local function createButton(text)
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(1,0,0,35)
+	button.BackgroundColor3 = Color3.fromRGB(55,55,55)
+	button.BorderSizePixel = 0
+	button.Text = text
+	button.TextColor3 = Color3.new(1,1,1)
+	button.Font = Enum.Font.Gotham
+	button.TextSize = 14
+	button.Parent = content
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0,6)
+	corner.Parent = button
+
+	return button
+end
+
+-- Botões
+local TeleportGunStoreBtn = createButton("Teleport GunStore 🔫🎯")
+local TeleportCriminalsBaseBtn = createButton("Teleport CriminalsBase 👥")
+local TeleportBankVaultBtn = createButton("Teleport BankVault 🏦")
+local TeleportJewelryBtn = createButton("Teleport Jewelry 💎")
+local TeleportGasStationBtn = createButton("Teleport GasStation ⛽")
+local TeleportMansionBtn = createButton("Teleport Mansion 🏡")
+
+-- Exemplo de adicionar mais botões:
+-- local summonBtn1 = createButton("Executar Summon 2")
+-- local summonBtn2 = createButton("Executar Summon 3")
+
+-- Créditos
+local creditLabel = Instance.new("TextLabel")
+creditLabel.Size = UDim2.new(1,0,0,20)
+creditLabel.BackgroundTransparency = 1
+creditLabel.Text = "by iagocno"
+creditLabel.TextColor3 = Color3.fromRGB(180,180,180)
+creditLabel.TextTransparency = 0.2
+creditLabel.Font = Enum.Font.LuckiestGuy
+creditLabel.TextSize = 16
+creditLabel.Parent = content
+
+local function UpdateFrameHeight()
+
+	local height =
+		layout.AbsoluteContentSize.Y
+		+ 60
+
+	frame.Size = UDim2.fromOffset(
+		frame.Size.X.Offset,
+		height
+	)
+end
+
+UpdateFrameHeight()
+
+layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+	UpdateFrameHeight()
+end)
+
+-- Teleport GunStore
+TeleportGunStoreBtn.MouseButton1Click:Connect(function()
+	local character = player.Character
+	if not character then return end
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	local safeZone = workspace.City.Store.GunStore
+
+	if hrp and safeZone then
+		hrp.CFrame = safeZone.CFrame + Vector3.new(0,5,0)
+	end
+end)
+
+-- Teleport BankVault
+TeleportBankVaultBtn.MouseButton1Click:Connect(function()
+	local character = player.Character
+	if not character then return end
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+    CFrame.new(666.459778, 6.64767456, -1250.97656)
+
+	if hrp and endLocation then
+		hrp.CFrame = endLocation.CFrame + Vector3.new(0,5,0)
+	end
+end)
+
+-- Teleport CriminalsBase
+TeleportCriminalsBaseBtn.MouseButton1Click:Connect(function()
+	local character = player.Character
+	if not character then return end
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	local safeZone = workspace.CriminalSpawns:GetChildren()[7]
+
+	if hrp and safeZone then
+		hrp.CFrame = safeZone.CFrame + Vector3.new(0,5,0)
+	end
+end)
+
+-- Teleport Jewelry
+TeleportJewelryBtn.MouseButton1Click:Connect(function()
+	local character = player.Character
+	if not character then return end
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+    CFrame.new(308.839, -25.313, -1625.207)
+
+	if hrp and safeZone then
+		hrp.CFrame = safeZone.CFrame + Vector3.new(0,5,0)
+	end
+end)
+
+-- Teleport GasStation
+TeleportGasStationBtn.MouseButton1Click:Connect(function()
+	local character = player.Character
+	if not character then return end
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+    CFrame.new(836.455139, -31.9608459, -460.648315)
+
+	if hrp and safeZone then
+		hrp.CFrame = safeZone.CFrame + Vector3.new(0,5,0)
+	end
+end)
+
+-- Teleport Mansion
+TeleportMansionBtn.MouseButton1Click:Connect(function()
+	local character = player.Character
+	if not character then return end
+
+	local hrp = character:FindFirstChild("HumanoidRootPart")
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame =
+    CFrame.new(319.473, -3.401, -2460.874)
+
+	if hrp and safeZone then
+		hrp.CFrame = safeZone.CFrame + Vector3.new(0,5,0)
+	end
+end)
+
+-- ALT DIREITO
+local guiVisible = true
+
+UserInputService.InputBegan:Connect(function(input, gpe)
+	if gpe then return end
+
+	if input.KeyCode == Enum.KeyCode.RightAlt then
+		guiVisible = not guiVisible
+		frame.Visible = guiVisible
+	end
+end)
+
+local minimized = false
+local maximized = false
+
+local storedSize = frame.Size
+local normalSize = frame.Size
+
+minimizeBtn.MouseButton1Click:Connect(function()
+
+	minimized = not minimized
+
+	if minimized then
+
+		storedSize = frame.Size
+
+		content.Visible = false
+
+		TweenService:Create(
+			frame,
+			TweenInfo.new(0.2),
+			{
+				Size = UDim2.fromOffset(
+					storedSize.X.Offset,
+					30
+				)
+			}
+		):Play()
+
+	else
+
+		content.Visible = true
+
+		TweenService:Create(
+			frame,
+			TweenInfo.new(0.2),
+			{
+				Size = storedSize
+			}
+		):Play()
+
+	end
+end)
+
+maximizeBtn.MouseButton1Click:Connect(function()
+
+	if minimized then
+		minimized = false
+		content.Visible = true
+
+		TweenService:Create(
+			frame,
+			TweenInfo.new(0.2),
+			{
+				Size = storedSize
+			}
+		):Play()
+
+		return
+	end
+
+	maximized = not maximized
+
+	local targetSize
+
+if maximized then
+
+	local contentHeight =
+		layout.AbsoluteContentSize.Y + 60
+
+	targetSize = UDim2.fromOffset(
+		math.max(normalWidth, 450),
+		contentHeight
+	)
+
+else
+
+	targetSize = UDim2.fromOffset(
+		normalWidth,
+		layout.AbsoluteContentSize.Y + 60
+	)
+
+end
+
+	TweenService:Create(
+		frame,
+		TweenInfo.new(0.2),
+		{
+			Size = targetSize
+		}
+	):Play()
+end)
+
+closeBtn.MouseButton1Click:Connect(function()
+	gui:Destroy()
+end)
+
+-- Drag
+local dragging = false
+local dragInput
+local dragStart
+local startPos
+
+topBar.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+
+		dragging = true
+		dragStart = input.Position
+		startPos = frame.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+topBar.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+
+	if dragging and input == dragInput then
+
+		local delta = input.Position - dragStart
+
+		frame.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
